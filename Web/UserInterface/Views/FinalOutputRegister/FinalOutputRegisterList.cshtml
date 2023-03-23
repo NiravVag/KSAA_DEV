@@ -1,0 +1,382 @@
+﻿@model KSAA.GL_Income.Application.DTOs.FinalOutputRegister.FinalOutputRegisterListModel
+@using KSAA.Domain.Common
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Final Output Register</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <d class="form-wrap">
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        <a class="btn btn-primary" onclick="GenFinalOutputRegister()" style="float: right; margin-top:16px ">Generate Final Output Register </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <form action="" method="post" id="myForm"> </form>
+            <a class="btn btn-primary" onclick="ExportFinalOutput()" style="float: right; margin-left:10px !important;">Export</a>
+            <a class="btn btn-primary" href="/documenttype/documenttypeupload/FOUTPUT" style="float: right;">Upload</a>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">Final Output Register</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                 <div class="panel-wrapper collapse in">
+                                    <div>
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30" style="white-space: nowrap;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Invoice No</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>E-Invoice Date</th>
+                                                            <th>E Invoice Total Amount</th>
+                                                            <th>E Invoice Tax Amount</th>
+                                                            <th>E Invoice Amount Different</th>
+                                                            <th>E Invoice Tax Different</th>
+                                                            <th>Shipping Bill No</th>
+                                                            <th>Shipping Bill Date</th>
+                                                            <th>HSN Code</th>
+                                                            <th>Quantity</th>
+                                                            <th>Unique Quantity Code</th>
+                                                            <th>Description</th>
+                                                            <th>Party Name</th>
+                                                            <th>GSTIN</th>
+                                                            <th>Reverse Charge</th>
+                                                            <th>Place of Supply</th>
+                                                            <th>Ex. Rate per Notifications</th>
+                                                            <th>Ex. Rate per Shipping Bill</th>
+                                                            <th>Taxable value</th>
+                                                            <th>Rate %</th>
+                                                            <th>Tax Amount</th>
+                                                            <th>CGST (Rs.)</th>
+                                                            <th>SGST / UTGST (Rs.)</th>
+                                                            <th>IGST (Rs.)</th>
+                                                            <th>Cess (Rs.)</th>
+                                                            <th>Total Invoice Value (Rs.)</th>
+                                                            <th>Vehicle No</th>
+                                                            <th>E-way Bill No</th>
+                                                            <th>Dispatch Location Code</th>
+                                                            <th>Port Code</th>
+                                                            <th>Voucher No</th>
+                                                            <th>Accounting Date</th>
+                                                            <th>Location Code</th>
+                                                            <th>GL Code</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>E-Invoice Date</th>
+                                                            <th>E-Way Bill No</th>
+                                                            <th>E-Way Date</th>
+                                                            <th>Type Of Supply SL</th>
+                                                            <th>GST Payment Type SL</th>
+                                                            @*<th>Remarks</th>
+                                                            <th>Action</th>*@
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.finalOutputRegistersList != null && Model.finalOutputRegistersList.Any())
+                                                        {
+                                                            @foreach (var data in Model.finalOutputRegistersList)
+                                                            {
+                                                                <tr>
+                                                                    <td>@data.Document_Type</td>
+                                                                    <td>@data.Invoice_Number</td>
+                                                                    <td>@data.Invoice_Date</td>
+                                                                    <td>@data.E_Invoice_No</td>
+                                                                    <td>@data.E_Invoice_Date</td>
+                                                                    <td>@data.E_Invoice_Total_Amount</td>
+                                                                    <td>@data.E_Invoice_Tax_Amount</td>
+                                                                    <td>@data.E_Invoice_Amount_Different </td>
+                                                                    <td>@data.E_Invoice_Tax_Different</td>
+                                                                    <td>@data.Shipping_Bill_No</td>
+                                                                    <td>@data.Shipping_Bill_Date</td>
+                                                                    <td>@data.HSN_Code</td>
+                                                                    <td>@data.Quantity</td>
+                                                                    <td>@data.Unique_Quantity_Code</td>
+                                                                    <td>@data.Description</td>
+                                                                    <td>@data.Party_Name</td>
+                                                                    <td>@data.GSTIN</td>
+                                                                    <td>@data.Reverse_Charge</td>
+                                                                    <td>@data.Place_Of_Supply_State_Name</td>
+                                                                    <td>@data.Exchange_Rate_As_Per_Notifications </td>
+                                                                    <td>@data.Exchange_Rate_As_Per_Shipping_Bill</td>
+                                                                    <td>@data.Taxable_Value</td>
+                                                                    <td>@data.Rate</td>
+                                                                    <td>@data.Total_Tax</td>
+                                                                    <td>@data.Central_Tax</td>
+                                                                    <td>@data.State_UT_Tax</td>
+                                                                    <td>@data.Integrated_Tax</td>
+                                                                    <td>@data.Cess_Amount</td>
+                                                                    <td>@data.Total_Invoice_Value_Rs</td>
+                                                                    <td>@data.Vehicle_No </td>
+                                                                    <td>@data.E_Way_Bill_No</td>
+                                                                    <td>@data.Dispatch_Location_Code</td>
+                                                                    <td>@data.Port_Code</td>
+                                                                    <td>@data.Voucher_No</td>
+                                                                    <td>@data.Accounting_Date</td>
+                                                                    <td>@data.Location_Code</td>
+                                                                    <td>@data.GL_Code</td>
+                                                                    <td>@data.E_Invoice_No_2</td>
+                                                                    <td>@data.E_Invoice_Date_2</td>
+                                                                    <td>@data.E_Way_Bill_No_2</td>
+                                                                    <td>@data.E_Way_Date_2</td>
+                                                                    <td>@data.TypeOfSupplySL</td>
+                                                                    <td>@data.GSTPaymentTypeSL</td>
+                                                                </tr>
+                                                            }
+                                                        }
+
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Invoice No</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>E-Invoice Date</th>
+                                                            <th>E Invoice Total Amount</th>
+                                                            <th>E Invoice Tax Amount</th>
+                                                            <th>E Invoice Amount Different</th>
+                                                            <th>E Invoice Tax Different</th>
+                                                            <th>Shipping Bill No</th>
+                                                            <th>Shipping Bill Date</th>
+                                                            <th>HSN Code</th>
+                                                            <th>Quantity</th>
+                                                            <th>Unique Quantity Code</th>
+                                                            <th>Description</th>
+                                                            <th>Party Name</th>
+                                                            <th>GSTIN</th>
+                                                            <th>Reverse Charge</th>
+                                                            <th>Place of Supply</th>
+                                                            <th>Ex. Rate per Notifications</th>
+                                                            <th>Ex. Rate per Shipping Bill</th>
+                                                            <th>Taxable value</th>
+                                                            <th>Rate %</th>
+                                                            <th>Tax Amount</th>
+                                                            <th>CGST (Rs.)</th>
+                                                            <th>SGST / UTGST (Rs.)</th>
+                                                            <th>IGST (Rs.)</th>
+                                                            <th>Cess (Rs.)</th>
+                                                            <th>Total Invoice Value (Rs.)</th>
+                                                            <th>Vehicle No</th>
+                                                            <th>E-way Bill No</th>
+                                                            <th>Dispatch Location Code</th>
+                                                            <th>Port Code</th>
+                                                            <th>Voucher No</th>
+                                                            <th>Accounting Date</th>
+                                                            <th>Location Code</th>
+                                                            <th>GL Code</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>E-Invoice Date</th>
+                                                            <th>E-Way Bill No</th>
+                                                            <th>E-Way Date</th>
+                                                            <th>Type Of Supply SL</th>
+                                                            <th>GST Payment Type SL</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#divLoader").show();
+        setTimeout(function () {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+        $('#year').val(@ViewBag.Year);
+    });
+</script>
+
+<script type="text/javascript">
+    function GenFinalOutputRegister() {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+
+        if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+            $("#divLoader").show();
+            $.ajax({
+                url: `/FinalOutputRegister/GenrateFinalOutputRegister?m=${month_value}&y=${year_value}`,
+                type: "POST",
+                success: function (data) {
+                    $("#divLoader").hide();
+                    console.log(data);
+                    $.toast({
+                        text: "Generate Final Output Register Success",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6,
+                    })
+                    setTimeout(function () {
+                        window.location.href = "/FinalOutputRegister/FinalOutputRegisterList?m=" + month_value + "&y=" + year_value
+                    }, 2000);
+                },
+                error: function (jqXHR, textStatus, error) {
+                    //alert(data);
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: jqXHR.responseJSON.message,
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                }
+            });
+        }
+    }
+</script>
+<script type="text/javascript">
+    function ExportFinalOutput() {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        var actionurl = `/FinalOutputRegister/Export?m=${month_value}&y=${year_value}`;
+        $("form#myForm").attr("action", actionurl);
+        $('#Month').val(month_value);
+        $('#Year').val(year_value);
+        $('form#myForm').submit();
+    }
+
+</script>

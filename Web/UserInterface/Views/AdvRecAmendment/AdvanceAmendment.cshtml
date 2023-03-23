@@ -1,0 +1,669 @@
+﻿@model KSAA.GL_Income.Application.DTOs.AdvanceRecAdj.AdvanceReceivedListModule
+@using KSAA.Domain.Common
+
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row pt-20">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Advance Amendment</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        @*<button type="button" class="btn btn-success btn-anim" style="float:right"><i class="icon-rocket"></i><span class="btn-text">submit</span></button>*@
+                        <button class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 11px;" onclick="GenAdvReceived()">Generate Advance Received</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">Data as per Advance Amendment</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                @*<div class="panel-heading">
+                                <div class="pull-left"></div>
+                                <div class="clearfix"></div>
+                                </div>*@
+                                <div class="panel-wrapper collapse in">
+                                    <div>
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30" style="white-space: nowrap;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden>Id</th>
+                                                            <th>Client Code</th>
+                                                            <th>Recipt Number</th>
+                                                            <th>Date Of Receipt</th>
+                                                            <th>GSTIN</th>
+                                                            <th>PoS</th>
+                                                            <th>Type Of Supply</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Rate</th>
+                                                            <th>Cess%</th>
+                                                            <th>CGST</th>
+                                                            <th>SGST</th>
+                                                            <th>IGST</th>
+                                                            <th>Cess</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Total Invoice Value</th>
+                                                            <th>Add Actions</th>
+                                                            <th>View Actions</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    @if (Model.AdvanceReceivedList != null && Model.AdvanceReceivedList.Any())
+                                                    {
+                                                        @foreach (var data in Model.AdvanceReceivedList)
+                                                        {
+                                                            <tr>
+                                                                <td hidden>@data.Id</td>
+                                                                <td>@data.ClientCode</td>
+                                                                <td>@data.ReceiptNumber</td>
+                                                                <td>@data.DateofReceipt</td>
+                                                                <td>@data.GSTIN</td>
+                                                                <td>@data.POS</td>
+                                                                <td>@data.TypeOfSupply</td>
+                                                                <td>@data.TaxableValue</td>
+                                                                <td>@data.Rate</td>
+                                                                <td>@data.CessPercentage </td>
+                                                                <td>@data.CGST</td>
+                                                                <td>@data.SGST</td>
+                                                                <td>@data.IGST</td>
+                                                                <td>@data.Cess</td>
+                                                                <td>@data.TotalTax</td>
+                                                                <td>@data.TotalInvoiceValue</td>
+                                                                <td>
+                                                                    <a class="btn btn-primary btn-anim" style="float: right; width:170px; margin-left:10px !important;" onclick="AddAmendment(@data.Id)"> Add Amendment</a>
+                                                                    @*<button class="btn btn-primary btn-anim" id="Amendment" data-toggle="modal" style="float: right; width:170px; margin-right:10px; margin-top: 11px;">Add Amendment</button>*@
+                                                                    @*<button class="btn btn-primary btn-anim" style="float: right; width:170px; margin-right:10px; margin-top: 11px;" onclick="AddAmendment(this,@data.Id)">Add Amendment</button>*@
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-primary btn-anim" style="float: right; width:170px; margin-left:10px !important;" onclick="ViewAmendment(@data.Id)"> View Amendment</a>
+                                                                    @*<a class="btn btn-primary btn-anim" id="ViewAmendment" data-toggle="modal" style="float: right; width:170px;"> View Amendment</a>*@
+                                                                    @*<button class="btn btn-primary btn-anim" id="ViewAmendment" onclick="ViewAmendment(@data.Id)" style="float: right; width:170px;">View Amendment</button>*@
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    <tbody>
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th hidden>Id</th>
+                                                            <th>Client Code</th>
+                                                            <th>Recipt Number</th>
+                                                            <th>Date Of Receipt</th>
+                                                            <th>GSTIN</th>
+                                                            <th>PoS</th>
+                                                            <th>Type Of Supply</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Rate</th>
+                                                            <th>Cess%</th>
+                                                            <th>CGST</th>
+                                                            <th>SGST</th>
+                                                            <th>IGST</th>
+                                                            <th>Cess</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Total Invoice Value</th>
+                                                            <th>Add Actions</th>
+                                                            <th>View Actions</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /.modal -->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title">Amendment</h5>
+            </div>
+            <div class="modal-body">
+                <form data-toggle="validator" role="form" method="post" id="frmAmendmentAdd" name="frmAmendmentAdd">
+                    <input type="hidden" id="AdvanceReceivedId"/>
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="control-label col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <label>Receipt Number</label>
+                                        <input class="form-control" data-required-error="Receipt Number is required" id="ReceiptNumber" required asp-for="@Model.ReceiptNumber">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/span-->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="col-md-9">
+                                            <label>Rate</label>
+                                            <input class="form-control" data-required-error="Rate is required" id="Rate" required asp-for="@Model.Rate">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+                        </div>
+                        <!--/span-->
+                    </div>
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="control-label col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <label>Cess Percentage</label>
+                                        <input class="form-control" data-required-error="Cess Percentage is required" id="CessPercentage" required asp-for="@Model.CessPercentage">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/span-->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="col-md-9">
+                                            <label>Taxable Value</label>
+                                            <input class="form-control" data-required-error="Taxable Value is required" id="TaxableValue" required asp-for="@Model.TaxableValue">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+                        </div>
+                        <!--/span-->
+                    </div>
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="control-label col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <label>CGST</label>
+                                        <input class="form-control" data-required-error="CGST is required" id="CGST" required asp-for="@Model.CGST">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/span-->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="col-md-9">
+                                            <label>SGST</label>
+                                            <input class="form-control" data-required-error="SGST is required" id="SGST" required asp-for="@Model.SGST">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+                        </div>
+                        <!--/span-->
+                    </div>
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="control-label col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <label>Cess</label>
+                                        <input class="form-control" data-required-error="Cess is required" id="Cess" required asp-for="@Model.Cess">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/span-->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="col-md-9">
+                                            <label>Total Tax</label>
+                                            <input class="form-control" data-required-error="Total Tax is required" id="TotalTax" required asp-for="@Model.TotalTax">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+                        </div>
+                        <!--/span-->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Save changes</button>
+                    </div>
+                </form>
+            </div>            
+        </div>
+    </div>
+</div>
+<!--End Model-->
+
+@*bootstrap list modal*@
+<!-- Row -->
+<div class="modal fade bs-example-modal-lg" id="myfilePreviewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" style="width:95% !important">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title" id="myfilePreviewModal">Preview Add Amendment</h5>
+            </div>
+            <div class="modal-body">
+                <table id="filePreview" class="display" style="white-space: nowrap;  text-align:center;"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-left" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //debugger;
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+        $('#year').val(@ViewBag.Year);
+        //$('#datable_1').DataTable({
+        //    "lengthChange": false,
+        //    "order": [[0, "desc"]]
+        //});
+    });
+</script>
+
+@section Scripts{
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/vendors/bower_components/bootstrap-validator/dist/validator.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="https://unpkg.com/sweetalert2@7.8.2/dist/sweetalert2.all.js"></script>
+
+    <script type="text/javascript">
+        function GenAdvReceived() {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    url: `/AdvRecAmendment/AdvanceAmendment?m=${month_value}&y=${year_value}`,
+                    type: "POST",
+                    success: function(data) {
+                        $("#divLoader").hide();
+                        console.log(data);
+                        $.toast({
+                            text: "Create Advance Register Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6,
+                        })
+                        setTimeout(function() {
+                            window.location.href = "/AdvRecAmendment/AdvanceAmendment?m=" + month_value + "&y=" + year_value
+                            //window.location.reload();
+                        }, 2000);
+                    },
+                    error: function(jqXHR, textStatus, error) {
+                        //alert(data);
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                });
+            }
+        }
+
+        function AddAmendment(Id) {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            var id = Id;
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                swal({
+                    title: "Are you sure?",
+                    text: "Do you want to amendment the data as per Advance Register",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                    allowOutsideClick: !1
+                }).then(function(t) {
+                    if (t) {
+                       $.ajax({
+                            type: "POST",
+                            url: `/AdvRecAmendment/GetReceivedAmendmentById?id=${id}&month=${month_value}&year=${year_value}`,
+                            dataType: "json",
+                            cache: false,
+                            success: function(result) 
+                            {
+                                if (result.statusCode) 
+                                {
+                                    $("#divLoader").hide();
+                                    $("#responsive-modal").modal("show");
+                                    $("#AdvanceReceivedId").val(Id);
+                                }
+                                else 
+                                {
+                                    $("#divLoader").hide();
+                                    $.toast({
+                                        text: "Data as per Advance Register Not Amendment",
+                                        position: 'top-right',
+                                        loaderBg: '#f8b32d',
+                                        icon: 'error',
+                                        hideAfter: 3500,
+                                        stack: 6,
+                                    });
+                                }
+                            },
+                            error: function(result) {
+                                $("#divLoader").hide();
+                                $.toast({
+                                    text: "Data as per Advance Register Not Amendment",
+                                    position: 'top-right',
+                                    loaderBg: '#f8b32d',
+                                    icon: 'error',
+                                    hideAfter: 3500,
+                                    stack: 6,
+                                });
+                            },
+                            complete: function() {
+                                addRemoveLoader(true);
+                            },
+                        }); 
+                    }
+                });
+            }
+        }
+    
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#frmAmendmentAdd').validator().on('submit', function(e) {
+                if (e.isDefaultPrevented()) {
+                    // handle the invalid form...
+                }
+                else {
+                    var obj = {
+                        AdvanceReceivedId: $("#AdvanceReceivedId").val(),
+                        ReceiptNumber: $("#ReceiptNumber").val(),
+                        Rate: $("#Rate").val(),
+                        CessPercentage: $("#CessPercentage").val(),
+                        TaxableValue: $("#TaxableValue").val(),
+                        CGST: $("#CGST").val(),
+                        SGST: $("#SGST").val(),
+                        IGST: $("#IGST").val(),
+                        Cess: $("#Cess").val(),
+                        TotalTax: $("#TotalTax").val(),
+                        Month: $('#month').val(),
+                        Year: $('#year').val(),
+                    };
+                    $("#divLoader").show();
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/AdvRecAmendment/AddReceivedAmendmentById',
+                        method: 'POST',
+                        data: obj,
+                        success: function(data) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: data,
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'success',
+                                hideAfter: 3500,
+                                stack: 6,
+                            })
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1500);
+                        },
+                        error: function(result) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: "Data as per Advance Register Not Amendment",
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'error',
+                                hideAfter: 3500,
+                                stack: 6,
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+    //View Amendments
+        function ViewAmendment(Id) {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            var id = Id;
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                 $("#myfilePreviewModal").modal("show");
+                $.ajax({
+                    url: `/AdvRecAmendment/PreviewAddAmendmentById?id=${id}&month=${month_value}&year=${year_value}`,
+                    type: "POST",
+                    success: function(result) {
+                        $("#divLoader").hide();
+
+                        $('#filePreview').DataTable({
+                            data: result,
+                            ordering: false,
+                            destroy: true,
+                            columns: [
+                                { title: "Id", data: 'id', "autoWidth": true },
+                                { title: "Advance Received Id", data: 'advanceReceivedId', "autoWidth": true },
+                                { title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                { title: "Taxable Value", data: 'taxableValue', "autoWidth": true },
+                                { title: "Rate", data: 'rate', "autoWidth": true },
+                                { title: "Cess Percentage", data: 'cessPercentage', "autoWidth": true },
+                                { title: "CGST", data: 'cgst', "autoWidth": true },
+                                { title: "SGST", data: 'sgst', "autoWidth": true },
+                                { title: "IGST", data: 'igst', "autoWidth": true },
+                                { title: "CESS", data: 'cess', "autoWidth": true },
+                                { title: "Total Tax", data: 'totalTax', "autoWidth": true },
+                                //{ title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                { title: "Total Invoice Value", data: 'totalInvoiceValue', "autoWidth": true },
+                                { title: "Created By", data: 'createdBy', "autoWidth": true },
+                                { title: "Created On", data: 'createdOn', "autoWidth": true }
+                            ],
+                        });
+                       
+                    },
+                    error: function(result) {
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: error,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6,
+                        });
+                    },
+                });
+                return false;
+            }
+        }
+    </script>
+}

@@ -1,0 +1,417 @@
+﻿@model KSAA.ClientRegister.Application.DTOs.ClientRegister.ClientAuthorizedSignatoryViewModel
+@using KSAA.Domain.Common;
+
+<style>
+	#divLoader {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  background-color: #fff;
+  z-index: 99;
+}
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <a href="~/ClientAuthorizedSignatory/ClientAuthorizedSignatoryList" class="btn btn-primary  mr-10" style="width: 140px; margin-top: 10px; float: right;margin-bottom: 10px;">LIST</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+
+
+<div class="row">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <h6 class="txt-dark capitalize-font">Update Details Of Authorized Signatory</h6>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-wrap">
+                            <form class="form-horizontal" data-toggle="validator" role="form" method="post" id="frmdetailsOfAuthorizedSignatoryedit" name="frmdetailsOfAuthorizedSignatoryedit">
+                                <!--/Row-->
+                                @Html.HiddenFor(x=>x.Id)
+                                <!--/Row-->
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>First Name</label>
+                                                    <input class="form-control" data-required-error="First Name required" id="FirstName" value="@Model.FirstName" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label>Middle Name</label>
+                                                        <input class="form-control" data-required-error="Middle Name is required" id="MiddleName" value="@Model.MiddleName" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+                                        <!--/Row-->
+                                    </div>
+
+                                    <div class="form-body">
+                                        <!--/Row-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label>Last Name</label>
+                                                        <input class="form-control" data-required-error="Last Name required" id="LastName" value="@Model.LastName" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label>Father First Name</label>
+                                                            <input class="form-control" data-required-error="Father First Name is required" id="FatherFirstName" value="@Model.FatherFirstName" required>
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+                                        <!--/Row-->
+                                    </div>
+
+                                    <div class="form-body">
+                                        <!--/Row-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label>Father Middle Name</label>
+                                                        <input class="form-control" data-required-error="Father Middle Name is required" id="FatherMiddleName" value="@Model.FatherMiddleName" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label>Father Last Name</label>
+                                                            <input class="form-control" data-required-error="Father Last Name required" id="FatherLastName" value="@Model.FatherLastName" required>
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!--/span-->
+                                        </div>
+                                        <!--/Row-->
+                                    </div>
+
+                                    <div class="form-body">
+                                        <!--/Row-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label>Date of Birth</label>
+                                                        <input class="form-control" data-mask="99/99/9999" data-required-error="Date of Birth required" id="DOB" value="@Model.BOD.ToString(DateTimeFormat.StandardDateTime)" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label>Gender</label>
+                                                            <select class="form-control" asp-for="@Model.Gender" id="Gender" value="@Model.Gender">
+                                                                <option value="">----- Select -----</option>
+                                                                <option value="Male">Male</option>
+                                                                <option value="Female">Female</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Designation/Status</label>
+                                                    <input class="form-control" data-required-error="Designation/Status required" id="Designation" value="@Model.DesignationStatus" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label>Mobile Number</label>
+                                                        <input class="form-control" data-required-error="Mobile Number is required" id="Contact" value="@Model.Mobile" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Telephone Number</label>
+                                                    <input class="form-control" data-required-error="Telephone No with STD required" id="TContact" value="@Model.PhoneNoSTD" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label>PAN Number</label>
+                                                        <input class="form-control" data-required-error="Pan is required" id="PAN" value="@Model.PAN" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Address</label>
+                                                    <input class="form-control" data-required-error="Residential Address required" id="ResidentialAddress" value="@Model.Address" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label>Email</label>
+                                                        <input class="form-control" data-required-error="Email is required" value="@Model.Email" id="Email" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>DIN</label>
+                                                    <input class="form-control" data-required-error="DIN required" id="DIN" value="@Model.DIN" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label class="control-label mb-10">Whether citizen of India?</label>
+                                                        <div class="radio-list">
+                                                            <div class="radio-inline pl-0">
+                                                                <span class="radio radio-info">
+                                                                    <input type="radio" name="Indian" id="indian" value="true" asp-for="@Model.Indian">
+                                                                    <label>Yes</label>
+                                                                </span>
+                                                            </div>
+                                                            <div class="radio-inline">
+                                                                <span class="radio radio-info">
+                                                                    <input type="radio" name="Indian" value="false" asp-for="@Model.Indian">
+                                                                    <label>No</label>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+                                        <!--/Row-->
+                                    </div>
+                                </div>
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        @*<div class="col-md-6">
+                                        <div class="form-group">
+                                        <div class="col-md-9">
+                                        <div class="input-group">
+                                        <div class="input-group-addon"><i class=""></i></div>
+                                        <input class="form-control" type="file" id="ProofofAppointmentofAuthorizedSignatory" value="@Model.Photo" required>
+                                        </div>
+                                        <div class="help-block with-errors"></div>
+                                        </div>
+                                        </div>
+                                        </div>*@
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                <!-- /Row -->
+                                <div class="form-actions mt-10">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button type="submit"
+                                                            class="btn btn-primary  mr-10">
+                                                        Submit
+                                                    </button>
+                                                    <a href="~/ClientAuthorizedSignatory/ClientAuthorizedSignatoryList"
+                                                       class="btn btn-warning">
+                                                        Cancel
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"> </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#frmdetailsOfAuthorizedSignatoryedit').validator().on('submit', function(e) {
+                if (e.isDefaultPrevented()) {
+                    // handle the invalid form...
+                }
+                else {
+                    var obj = {
+                        Id: @Model.Id,
+                        FirstName: $("#FirstName").val(),
+                        MiddleName: $("#MiddleName").val(),
+                        LastName: $("#LastName").val(),
+                        FatherFirstName: $("#FatherFirstName").val(),
+                        FatherMiddleName: $("#FatherMiddleName").val(),
+                        FatherLastName: $("#FatherLastName").val(),
+                        BOD: $("#DOB").val(),
+                        Gender: $("#Gender").val(),
+                        DesignationStatus: $("#Designation").val(),
+                        Mobile: $("#Contact").val(),
+                        PhoneNoSTD: $("#TContact").val(),
+                        Email: $("#Email").val(),
+                        Address: $("#ResidentialAddress").val(),
+                        PAN: $("#PAN").val(),
+                        DIN: $("#DIN").val(),
+                        Indian: $("#indian").is(':checked'),
+                        //Photo: $("#ProofofAppointmentofAuthorizedSignatory").val()
+                    };
+                    $("#divLoader").show();
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/ClientAuthorizedSignatory/ClientAuthorizedSignatoryEdit',
+                        method: 'POST',
+                        data: obj,
+                        success: function(data) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: "Client Authorized Signatory Update SuccessFully",
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'success',
+                                hideAfter: 3500,
+                                stack: 6,
+                            })
+                            setTimeout(function() {
+                                window.location.href = "/ClientAuthorizedSignatory/ClientAuthorizedSignatoryList"
+                            }, 1500);
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: jqXHR.responseJSON.message,
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'error',
+                                hideAfter: 3500,
+                                stack: 6
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+    }

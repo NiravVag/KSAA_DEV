@@ -1,0 +1,331 @@
+﻿@model KSAA.GL_Income.Application.DTOs.OutputRegister.OutputRegisterViewModel
+@using KSAA.Domain.Common
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Output Register</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        @*<button type="button" class="btn btn-success btn-anim" style="float:right"><i class="icon-rocket"></i><span class="btn-text">submit</span></button>*@
+                        <a class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 16px;" onclick="GetOutputRegisterList()">Generate Output Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">Output Register</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                @*<div class="panel-heading">
+                                <div class="pull-left"></div>
+                                <div class="clearfix"></div>
+                                </div>*@
+                                <div class="panel-wrapper collapse in">
+                                    <div>
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30" style="white-space: nowrap;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Invoice No</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Shipping bill No</th>
+                                                            <th>Shipping bill date</th>
+                                                            <th>HSN Code</th>
+                                                            <th>Quantity</th>
+                                                            <th>UQC</th>
+                                                            <th>Description</th>
+                                                            <th>Party Name</th>
+                                                            <th>GSTIN</th>
+                                                            <th>Reverse Charge</th>
+                                                            <th>Place of Supply(Name of State)</th>
+                                                            <th>Exchange Rate as per Notifications</th>
+                                                            <th>Exchange Rate as per Shipping Bill</th>
+                                                            <th>Taxable value</th>
+                                                            <th>Rate Percentage</th>
+                                                            <th>Tax Amount</th>
+                                                            <th>CGST</th>
+                                                            <th>SGST/UTGST</th>
+                                                            <th>IGST</th>
+                                                            <th>Cess</th>
+                                                            <th>Total Invoice Value</th>
+                                                            <th>Vehicle No</th>
+                                                            <th>E-way Bill No</th>
+                                                            <th>Dispatch Location Code</th>
+                                                            <th>Port Code</th>
+                                                            <th>Voucher No.</th>
+                                                            <th>Accounting Date</th>
+                                                            <th>Location Code</th>
+                                                            <th>GL Code</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>E-Invoice Date</th>
+                                                            <th>E-Way Bill No</th>
+                                                            <th>E-Way Date</th>
+                                                            <th>Advance Receipt Number</th>
+                                                            <th>Is Amended</th>
+                                                            <th>Amendment Remarks</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    @if (Model.OutputRegisterGrid != null && Model.OutputRegisterGrid.Any())
+                                                    {
+                                                        @foreach (var data in Model.OutputRegisterGrid)
+                                                    {
+                                                    <tr>
+                                                    <td>@data.DocumentType</td>
+                                                    <td>@data.InvoiceNumber</td>
+                                                    <td>@data.E_InvoiceNo</td>
+                                                    <td>@data.EInvoiceDate</td>
+                                                    <td>@data.ShippingBillNo</td>
+                                                    <td>@data.ShippingBillDate</td>
+                                                    <td>@data.HSNCode</td>
+                                                    <td>@data.Quantity</td>
+                                                    <td>@data.UniqueQuantityCode</td>
+                                                    <td>@data.Description</td>
+                                                    <td>@data.PartyName</td>
+                                                    <td>@data.GSTIN </td>
+                                                    <td>@data.ReverseCharge</td>
+                                                    <td>@data.PlaceOfSupplyStateName</td>
+                                                    <td>@data.Exchange_RateAsPerNotifications</td>
+                                                    <td>@data.Exchange_Rate_As_Per_Shipping_Bill</td>
+                                                    <td>@data.TaxableValue</td>
+                                                    <td>@data.Rate</td>
+                                                    <td>@data.TotalTax</td>
+                                                    <td>@data.CentralTax</td>
+                                                    <td>@data.StateUTTax </td>
+                                                    <td>@data.IntegratedTax</td>
+                                                    <td>@data.CessAmount</td>
+                                                    <td>@data.TotalInvoiceValue_Rs</td>
+                                                    <td>@data.VehicleNo</td>
+                                                    <td>@data.EWayBillNo</td>
+                                                    <td>@data.DispatchLocationCode</td>
+                                                    <td>@data.PortCode</td>
+                                                    <td>@data.VoucherNo</td>
+                                                    <td>@data.AccountingDate</td>
+                                                    <td>@data.LocationCode</td>
+                                                    <td>@data.GL_Code</td>
+                                                    <td>@data.EInvoiceNo2</td>
+                                                    <td>@data.EInvoiceDate2</td>
+                                                    <td>@data.EWayBillNo2</td>
+                                                    <td>@data.EWayDate2</td>
+                                                    <td>@data.AdvanceReceiptNumber</td>
+                                                    <td>@data.IsInvoiceAmended</td>
+                                                    <td>@data.RemarksInvoiceAmended</td>
+                                                   </tr>
+                                                    }
+                                                    }
+                                                    <tbody>
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Invoice No</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Shipping bill No</th>
+                                                            <th>Shipping bill date</th>
+                                                            <th>HSN Code</th>
+                                                            <th>Quantity</th>
+                                                            <th>UQC</th>
+                                                            <th>Description</th>
+                                                            <th>Party Name</th>
+                                                            <th>GSTIN</th>
+                                                            <th>Reverse Charge</th>
+                                                            <th>Place of Supply(Name of State)</th>
+                                                            <th>Exchange Rate as per Notifications</th>
+                                                            <th>Exchange Rate as per Shipping Bill</th>
+                                                            <th>Taxable value</th>
+                                                            <th>Rate Percentage</th>
+                                                            <th>Tax Amount</th>
+                                                            <th>CGST</th>
+                                                            <th>SGST/UTGST</th>
+                                                            <th>IGST</th>
+                                                            <th>Cess</th>
+                                                            <th>Total Invoice Value</th>
+                                                            <th>Vehicle No</th>
+                                                            <th>E-way Bill No</th>
+                                                            <th>Dispatch Location Code</th>
+                                                            <th>Port Code</th>
+                                                            <th>Voucher No.</th>
+                                                            <th>Accounting Date</th>
+                                                            <th>Location Code</th>
+                                                            <th>GL Code</th>
+                                                            <th>E-Invoice No</th>
+                                                            <th>E-Invoice Date</th>
+                                                            <th>E-Way Bill No</th>
+                                                            <th>E-Way Date</th>
+                                                            <th>Advance Receipt Number</th>
+                                                            <th>Is Amended</th>
+                                                            <th>Amendment Remarks</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //debugger;
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+        $('#year').val(@ViewBag.Year);
+    });
+</script>
+
+<script type="text/javascript">
+    function GetOutputRegisterList() {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+            $("#divLoader").show();
+            $.ajax({
+                url: `/OutputRegister/GetOutputRegisterList?m=${month_value}&y=${year_value}`,
+                type: "POST",
+                success: function (data) {
+                    $("#divLoader").hide();
+                    console.log(data);
+                    $.toast({
+                        text: "Generate Output Register Success",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6,
+                    })
+                    setTimeout(function () {
+                        window.location.href = "/OutputRegister/GetOutputRegisterList?m=" + month_value + "&y=" + year_value
+                    }, 2000);
+                },
+                error: function (jqXHR, textStatus, error) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: jqXHR.responseJSON.message,
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                }
+            });
+        }
+    }
+</script>

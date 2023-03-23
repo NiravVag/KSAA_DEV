@@ -1,0 +1,1118 @@
+﻿@model KSAA.Master.Application.DTOs.Master.DocumentTypeUpload
+@using KSAA.Domain.Common
+
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+
+<form method="post" enctype="multipart/form-data" id="frmDocumentTypeUpload" name="frmDocumentTypeUpload" data-toggle="validator" role="form">
+    <!-- Main Content -->
+    <input type="hidden" name="type" id="type" value="@Model.type" />
+    <div class="page-wrapper">
+        <div class="container-fluid pt-25">
+            <!-- Row -->
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div>
+                        <div class="panel-heading">
+                            <div class="pull-left">
+                                <h6 class="panel-title txt-dark"></h6>
+                            </div>
+                            <div class="clearfix">
+
+                                @if (Model.type == "GLINR")
+                                {
+                                    <b><h4>GL Income Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "SUPR")
+                                {
+                                    <b><h4>Supply Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "EINR")
+                                {
+                                    <b><h4>E-Invoice Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "EWBILR")
+                                {
+                                    <b><h4>E-Way Bill Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "LIBLGR")
+                                {
+                                    <b><h4>Liability Ledger Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "ADVREC")
+                                {
+                                    <b><h4>Advance Received Document Upload</h4></b>
+                                }
+                                else if (Model.type == "ITCR")
+                                {
+                                    <b><h4>ITC Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "ITCGLR")
+                                {
+                                    <b><h4>ITC GL Register Document Upload</h4></b>
+                                }
+                                else if (Model.type == "IAD")
+                                {
+                                    <b><h4>Invoice Amendment Document Upload</h4></b>
+                                }
+                                 else if (Model.type == "FOUTPUT")
+                                {
+                                    <b><h4>Final Output Register Upload</h4></b>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Row -->
+            <!-- Row -->
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="container">
+                        <div class="panel-heading">
+                            <div class="clearfix">
+                            </div>
+
+                            <div class="col-sm-3" style="padding-left:10px;">
+                                <h6 style="margin-left: 5px;">Month</h6>
+                                <select class="form-control selectpicker" name="month" id="month" data-style="btn-primary btn-outline" data-required-error="Month is required" required>
+                                    <option value="">--- Select ---</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                                <div class="help-block with-errors"></div>
+                            </div>
+
+                            <div class="col-sm-3" style="padding-left:10px;">
+                                <h6 style="margin-left: 5px;">Year</h6>
+                                <select class="form-control selectpicker" name="year" id="year" data-style="btn-info btn-outline" data-required-error="Year is required" required>
+                                    <option value="">--- Select ---</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                </select>
+                                <div class="help-block with-errors"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <!-- /Row -->
+
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="container">
+                        <div class="panel-heading">
+                            <div class="col-sm-6 ol-md-6 col-xs-12">
+                                <div class="panel panel-default card-view">
+                                    <div class="panel-heading">
+                                    </div>
+                                    <div class="panel-wrapper collapse in">
+                                        <div class="panel-body">
+                                            <div class="mt-10">
+                                                <input type="file" id="input-file-now" name="formfile" class="dropify" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- /Row -->
+
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="container">
+                        <div class="panel-heading" style="padding-left:25px;">
+                            <button type="submit" class="btn btn-primary btn-anim" style="width:160px">Upload</button>
+                            @if (Model.type != "IAD")
+                            {
+                                <a class="btn btn-primary btn-anim" id="Preview" data-toggle="modal" style="width:160px;margin-left:25px"> Preview </a>
+                            }
+                            @if (Model.type == "IAD")
+                            {
+                                <a class="btn btn-primary btn-anim" href="/DocumentType/DownloadFile/" title="Download file" style="width:160px;margin-left:25px"> Download Template </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@*bootstrap modal*@
+<!-- Row -->
+<div class="modal fade bs-example-modal-lg" id="myfilePreviewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    @*<div class="modal-dialog modal-lg" style="width:1200px">*@
+    <div class="modal-dialog modal-lg" style="width:95% !important">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title" id="myfilePreviewModal">File Preview</h5>
+            </div>
+            <div class="modal-body">
+                <table id="filePreview" class="display" style="white-space: nowrap;  text-align:center;"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-left" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- /Row -->
+@section Scripts{
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/vendors/bower_components/bootstrap-validator/dist/validator.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="https://unpkg.com/sweetalert2@7.8.2/dist/sweetalert2.all.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#frmDocumentTypeUpload').validator().on('submit', function (e) {
+
+                //e.preventDefault();
+                if ($("#month").val() === '') {
+                    //alert('Please Select Month');
+                    $.toast({
+                        text: "Please Select Month",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+                if ($("#year").val() === '') {
+                    //alert('Please Select Year');
+                    $.toast({
+                        text: "Please Select Year",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+                if ($("#input-file-now").val() === '' || $("#input-file-now").val() === null) {
+                    $.toast({
+                        text: "Please Select File",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+
+                if (($("#month").val() !== '') && ($("#year").val() !== '') && ($("#input-file-now").val() !== '' || $("#input-file-now").val() !== null)) {
+                    if (e.preventDefault()) {
+                        // handle the invalid form
+                    }
+                    else {
+                        $("#divLoader").show();
+                        e.preventDefault();
+
+                        var month_value = $('#month :selected').val();
+                        var year_value = $('#year :selected').val();
+                        var type_value = "@Model.type";
+                        var file = $('#input-file-now')[0].files[0];
+                        if ('@Model.type' == 'IAD') {
+                            uploadInvoiceAmendmentDocument();
+                            return;
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: `/DocumentType/GetData?m=${month_value}&y=${year_value}&t=${type_value}`,
+                            dataType: "json",
+                            success: function (res) {
+                                $("#divLoader").hide();
+                                if (parseInt(res) > 0) {
+                                    swal({
+                                        title: 'Do you want to do make fresh upload?',
+                                        text: 'Record file already exist.',
+                                        type: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#DD6B55',
+                                        confirmButtonText: 'Yes!',
+                                        cancelButtonText: 'No.'
+                                    }).then((result) => {
+                                        if (result.value) {
+                                            // handle Confirm button click
+                                            deleteData(month_value, year_value, type_value);
+                                        }
+                                        else {
+                                            // result.dismiss can be 'cancel', 'overlay', 'esc' or 'timer'
+                                            window.location.reload();
+                                        }
+                                    });
+                                }
+                                else {
+                                    // file upload
+                                    uploadDocument();
+                                    //$("#isTruncate").val("false");
+                                }
+                            },
+                            error: function (jqXHR, textStatus, error) {
+                                $("#divLoader").hide();
+                                $.toast({
+                                    text: jqXHR.responseJSON.error_description == "invalid_username_or_password" ? "Invalid user name or password" : "Internal Server Error",
+                                    position: 'top-right',
+                                    loaderBg: '#f8b32d',
+                                    icon: 'error',
+                                    hideAfter: 3500,
+                                    stack: 6
+                                });
+                            }
+                        })
+                    }
+                }
+            });
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        function uploadDocument() {
+            if ($("#month").val() === '') {
+                //alert('Please Select Month');
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                //alert('Please Select Year');
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#input-file-now").val() === '') {
+                $.toast({
+                    text: "Please Select File",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append('file', $('#input-file-now')[0].files[0]);
+            formData.append('month', $("#month").val());
+            formData.append('year', $("#year").val());
+            formData.append('type', $("#type").val());
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '') && ($("#input-file-now").val() !== '' || $("#input-file-now").val() !== null)) {
+                //console.log("call ajax now");
+                $("#divLoader").show();
+                $.ajax({
+                    url: '/DocumentType/DocumentTypeUpload',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        $("#divLoader").hide();
+                        console.log(data);
+                        $.toast({
+                            text: "Document Type Add Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                        //$("#Preview").removeAttr("disabled");
+                    },
+                    error: function (jqXHR, textStatus, error) {
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                })
+            }
+        }
+
+
+        function deleteData(month_value, year_value, type_value) {
+            if (month_value != -1 && year_value != -1 && type_value != "") {
+                $("#divLoader").show();
+                $.ajax({
+                    type: "POST",
+                    url: `/DocumentType/DeleteData?m=${month_value}&y=${year_value}&t=${type_value}`,
+                    success: function (res) {
+                        $("#divLoader").hide();
+                        uploadDocument();
+                    }
+                })
+            }
+        }
+
+
+        function uploadInvoiceAmendmentDocument() {
+            if ($("#month").val() === '') {
+                //alert('Please Select Month');
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                //alert('Please Select Year');
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#input-file-now").val() === '') {
+                $.toast({
+                    text: "Please Select File",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+
+            var amendmentData;
+
+            let formData = new FormData();
+            formData.append('file', $('#input-file-now')[0].files[0]);
+            formData.append('month', $("#month").val());
+            formData.append('year', $("#year").val());
+            formData.append('type', $("#type").val());
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '') && ($("#input-file-now").val() !== '' || $("#input-file-now").val() !== null)) {
+                //console.log("call ajax now");
+                $("#divLoader").show();
+                $.ajax({
+                    url: '/DocumentType/DocumentInvoiceAmendmentUpload',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        $("#divLoader").hide();
+                        console.log(data);
+                        //iadDataList(data);
+                        $.toast({
+                            text: "Invoice Amendment Data Updated Successfully",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                        $("#Preview").removeAttr("disabled");
+                    },
+                    error: function (jqXHR, textStatus, error) {
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                })
+            }
+        }
+
+        function iadDataList(data1) {
+            $.ajax({
+                url: '/DocumentType/InvoiceAmUpdateData',
+                method: 'POST',
+                data: data1,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    $("#divLoader").hide();
+                    console.log(data);
+                    //iadDataList(data.invoiceAmendmentUpdates);
+                    $.toast({
+                        text: "Update Invoice Amendment Data",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6
+
+                    });
+
+                    //$("#Preview").removeAttr("disabled");
+                },
+                error: function (jqXHR, textStatus, error) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: jqXHR.responseJSON.message,
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+
+                }
+            })
+        }
+    </script>
+
+
+    @*<script type="text/javascript">
+        $(document).ready(function() {
+            var month_value, year_value;
+            $("#month").change(function() {
+                var month_value = $('#month :selected').val();
+                //  alert(month_value);
+                checkDocument();
+
+            })
+            $("#year").change(function() {
+
+                var year_value = $('#year :selected').val();
+                //  $.get("HomeController.cs", function (value) {
+                // alert(year_value);
+                checkDocument();
+            })
+        })
+
+        function checkDocument() {
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+            var type_value = "@Model.type";
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                //console.log("call ajax now");
+                $.ajax({
+                    type: "POST",
+                    url: `/DocumentType/GetData?m=${month_value}&y=${year_value}&t=${type_value}`,
+                    dataType: "json",
+                    success: function(res) {
+                        if (parseInt(res) > 0) {
+                            swal({
+                                title: 'Do you want to do make fresh upload?',
+                                text: 'Record file already exist.',
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#DD6B55',
+                                confirmButtonText: 'Yes!',
+                                cancelButtonText: 'No.'
+                            }).then((result) => {
+                                if (result.value) {
+                                    // handle Confirm button click
+                                    deleteData(month_value, year_value, type_value);
+                                }
+                                else {
+                                    // result.dismiss can be 'cancel', 'overlay', 'esc' or 'timer'
+                                    window.location.reload();
+                                }
+                            });
+                        }
+                        else {
+                            // file upload
+                            //$("#isTruncate").val("false");
+                        }
+
+                        ////console.log(res);
+                        //if (parseInt(res) > 0) {
+                        //    const result = confirm("Record file already exist. Do you want to do make fresh upload.");
+                        //    if (result) {
+                        //        // delete data
+                        //        deleteData(month_value, year_value, type_value);
+                        //    }
+                        //} else {
+                        //    // file upload
+                        //    //$("#isTruncate").val("false");
+                        //}
+
+                    }
+                })
+            }
+        }
+
+
+        function deleteData(month_value, year_value, type_value) {
+            if (month_value != -1 && year_value != -1 && type_value != "") {
+                $.ajax({
+                    type: "POST",
+                    url: `/DocumentType/DeleteData?m=${month_value}&y=${year_value}&t=${type_value}`,
+                    success: function(res) {
+                    }
+                })
+            }
+        }
+    </script>*@
+
+    @*<script type="text/javascript">
+        $(document).ready(function() {
+            $('#frmDocumentTypeUpload').validator().on('submit', function(e) {
+
+                if (($("#month").val() !== '') && ($("#year").val() !== '') && ($("#input-file-now").val() !== null)) {
+
+                    if (e.isDefaultPrevented()) {
+                        // handle the invalid form
+                    }
+                    else {
+                        e.preventDefault();
+                        if ($("#month").val() === '') {
+                            alert('Please Select Month');
+                            return;
+                        }
+                        if ($("#year").val() === '') {
+                            alert('Please Select Year');
+                            return;
+                        }
+                        if ($("#input-file-now").val() === '') {
+                            alert('Please Select File');
+                            return;
+                        }
+                        let formData = new FormData();
+                        formData.append('file', $('#input-file-now')[0].files[0]);
+                        formData.append('month', $("#month").val());
+                        formData.append('year', $("#year").val());
+                        formData.append('type', $("#type").val());
+
+                        $.ajax({
+                            url: '/DocumentType/DocumentTypeUpload',
+                            method: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function(data) {
+                                console.log(data);
+                                $.toast({
+                                    text: "Document Type Add Success",
+                                    position: 'top-right',
+                                    loaderBg: '#f8b32d',
+                                    icon: 'success',
+                                    hideAfter: 3500,
+                                    stack: 6
+                                });
+                                $("#Preview").removeAttr("disabled");
+                            },
+                            error: function(jqXHR, textStatus, error) {
+                                $.toast({
+                                    text: jqXHR.responseJSON.message,
+                                    position: 'top-right',
+                                    loaderBg: '#f8b32d',
+                                    icon: 'error',
+                                    hideAfter: 3500,
+                                    stack: 6
+                                });
+                            }
+                        })
+                    }
+                }
+            });
+        });
+    </script>*@
+
+    <script type="text/javascript">
+        var type = "@Model.type";
+
+        $(document).ready(function () {
+            $("#Preview").click(function () {
+                if ($("#month").val() === '') {
+                    //alert('Please Select Month');
+                    $.toast({
+                        text: "Please Select Month",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+                if ($("#year").val() === '') {
+                    //alert('Please Select Year');
+                    $.toast({
+                        text: "Please Select Year",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+
+                if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                    $("#divLoader").show();
+                    $.ajax({
+                        url: '/DocumentType/PreViewDocumentUpload',
+                        type: 'POST',
+                        data: { month: $('#month').val(), year: $('#year').val(), type: "@Model.type" },
+                        success: function (result) {
+                            $("#divLoader").hide();
+                            if (type == "GLINR") {
+                                previewdDcument = [
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "Document Type", data: 'documentType', "autoWidth": true },
+                                    { title: "Invoice No", data: 'invoiceReceiptDNCNNo', "autoWidth": true },
+                                    {
+                                        title: "Invoice Date", data: 'invoiceReceiptDNCNDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.gLIncomeRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Customer Name", data: 'customerCode', "autoWidth": true },
+                                    { title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                    { title: "GL Income Code", data: 'glIncomeCode', "autoWidth": true },
+                                    { title: "GL Income Description", data: 'glIncomeDescription', "autoWidth": true },
+                                    { title: "Taxable Value", data: 'taxableValue', "autoWidth": true },
+                                    { title: "CGST", data: 'cgst', "autoWidth": true },
+                                    { title: "SGST", data: 'sgst', "autoWidth": true },
+                                    { title: "IGST", data: 'igst', "autoWidth": true },
+                                    { title: "CESS", data: 'cess', "autoWidth": true },
+                                    { title: "Location", data: 'locationCode', "autoWidth": true },
+                                    { title: "Voucher No", data: 'voucherNo', "autoWidth": true },
+                                    {
+                                        title: "Accounting Date", data: 'accountingDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.gLIncomeRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ]
+                                $('#filePreview').DataTable({
+                                    data: result.data.gLIncomeRegistersList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+                            else if (type == "SUPR") {
+                                previewdDcument = [
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "Document Type", data: 'documentType', "autoWidth": true },
+                                    { title: "Invoice No", data: 'invoiceReceiptDNCNNo', "autoWidth": true },
+                                    { title: "E Invoice No", data: 'eInvoiceNo', "autoWidth": true },
+                                    {
+                                        title: "Invoice Date", data: 'invoiceReceiptDNCNDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.supplyRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Shipping Bill No", data: 'shippingBillNo', "autoWidth": true },
+                                    {
+                                        title: "Shipping Bill Date", data: 'shippingBillDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.supplyRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "HSN Code", data: 'hsnCode', "autoWidth": true },
+                                    { title: "Quantity", data: 'quantity', "autoWidth": true },
+                                    { title: "Unique Quantity Code", data: 'uniqueQuantityCode', "autoWidth": true },
+                                    { title: "Description", data: 'description', "autoWidth": true },
+                                    { title: "Party Name", data: 'partyName', "autoWidth": true },
+                                    { title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                    { title: "Reverse Charge", data: 'reverseCharge', "autoWidth": true },
+                                    { title: "Place Of Supply State Name", data: 'placeOfSupplyStateName', "autoWidth": true },
+                                    { title: "Exchange Rate As Per Notifications", data: 'exchangeRateAsPerNotifications', "autoWidth": true },
+                                    { title: "Exchange Rate As Per Shipping Bill", data: 'exchangeRateAsPerShippingBill', "autoWidth": true },
+                                    { title: "Taxable Value", data: 'taxableValue', "autoWidth": true },
+                                    { title: "Rate", data: 'rate', "autoWidth": true },
+                                    { title: "Tax Amount", data: 'taxAmount', "autoWidth": true },
+                                    { title: "CGST", data: 'cgst', "autoWidth": true },
+                                    { title: "SGSTUTGST", data: 'sgstutgst', "autoWidth": true },
+                                    { title: "IGST", data: 'igst', "autoWidth": true },
+                                    { title: "CESS", data: 'cess', "autoWidth": true },
+                                    { title: "Total Invoice Value", data: 'totalInvoiceValue', "autoWidth": true },
+                                    { title: "Vehicle No", data: 'vehicleNo', "autoWidth": true },
+                                    {
+                                        title: "E Invoice Date", data: 'eInvoiceDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.supplyRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "E Way Bill No", data: 'eWayBillNo', "autoWidth": true },
+                                    {
+                                        title: "E Way Date", data: 'eWayDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.supplyRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Dispatch Location", data: 'dispatchLocationCode', "autoWidth": true },
+                                    { title: "Port Code", data: 'portCode', "autoWidth": true },
+                                    { title: "Voucher No", data: 'voucherNo', "autoWidth": true },
+                                    {
+                                        title: "Accounting Date", data: 'accountingDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.supplyRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Location", data: 'locationCode', "autoWidth": true },
+                                    { title: "GL Code", data: 'glCode', "autoWidth": true },
+                                    { title: "Type of supply", data: 'typeOfSupply', "autoWidth": true },
+                                    { title: "GST Payment Type", data: 'gstPaymentType', "autoWidth": true }
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ]
+
+                                $('#filePreview').DataTable({
+                                    data: result.data.supplyRegistersList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+                            else if (type == "EINR") {
+                                previewdDcument = [
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "GSTIN UIN Of Recipient", data: 'gstinuinOfRecipient', "autoWidth": true },
+                                    { title: "Reciever Name", data: 'recieverName', "autoWidth": true },
+                                    { title: "Invoice Number", data: 'invoiceNumber', "autoWidth": true },
+                                    {
+                                        title: "Invoice Date", data: 'invoiceDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eInvoiceRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Invoice Value", data: 'invoiceValue', "autoWidth": true },
+                                    { title: "Place Of Supply", data: 'placeOfSupply', "autoWidth": true },
+                                    { title: "Reverse Charge", data: 'reverseCharge', "autoWidth": true },
+                                    { title: "Applicable of Tax Rate", data: 'applicableofTaxRate', "autoWidth": true },
+                                    { title: "Invoice Type", data: 'invoiceType', "autoWidth": true },
+                                    { title: "E Commerce GSTIN", data: 'eCommerceGSTIN', "autoWidth": true },
+                                    { title: "Rate", data: 'rate', "autoWidth": true },
+                                    { title: "Taxable Value", data: 'taxableValue', "autoWidth": true },
+                                    { title: "Integrated Tax", data: 'integratedTax', "autoWidth": true },
+                                    { title: "Central Tax", data: 'centralTax', "autoWidth": true },
+                                    { title: "State UT Tax", data: 'stateUTTax', "autoWidth": true },
+                                    { title: "Cess Amount", data: 'cessAmount', "autoWidth": true },
+                                    { title: "IRN", data: 'irn', "autoWidth": true },
+                                    {
+                                        title: "IRN Date", data: 'irnDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eInvoiceRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "E Invoice Status", data: 'eInvoiceStatus', "autoWidth": true },
+                                    //{ title: "GSTR 1 Auto Population Deletion Upon Cancellation Date", data: 'gstR1AutoPopulationDeletionUponCancellationDate', "autoWidth": true },
+                                    {
+                                        title: "GSTR 1 Auto Population Deletion Upon Cancellation Date", data: 'gstR1AutoPopulationDeletionUponCancellationDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eInvoiceRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "GSTR 1 Auto Population Deletion Status", data: 'gstR1AutoPopulationDeletionStatus', "autoWidth": true },
+                                    { title: "Error In Auto Population Deletion", data: 'errorInAutoPopulationDeletion', "autoWidth": true },
+                                    { title: "Invoice Type 2", data: 'invoiceType2', "autoWidth": true },
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ]
+                                $('#filePreview').DataTable({
+                                    data: result.data.eInvoiceRegistersList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+                            else if (type == "EWBILR") {
+                                previewdDcument = [
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "EWB No", data: 'ewbNo', "autoWidth": true },
+                                    {
+                                        title: "EWB Date", data: 'ewbDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eWayBillRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Supply Type", data: 'supplyType', "autoWidth": true },
+                                    { title: "Doc No", data: 'docNo', "autoWidth": true },
+                                    {
+                                        title: "Doc Date", data: 'docDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eWayBillRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Other Party GSTIN", data: 'otherPartyGSTIN', "autoWidth": true },
+                                    { title: "Transporter Details", data: 'transporterDetails', "autoWidth": true },
+                                    { title: "From GSTIN Info", data: 'fromGSTINInfo', "autoWidth": true },
+                                    { title: "TO GSTIN Info", data: 'togstinInfo', "autoWidth": true },
+                                    { title: "Status", data: 'status', "autoWidth": true },
+                                    { title: "No Of Items", data: 'noOfItems', "autoWidth": true },
+                                    { title: "Main HSN Code", data: 'mainHSNCode', "autoWidth": true },
+                                    { title: "Main HSN Desc", data: 'mainHSNDesc', "autoWidth": true },
+                                    { title: "Assessable Value", data: 'assessableValue', "autoWidth": true },
+                                    { title: "SGST", data: 'sgst', "autoWidth": true },
+                                    { title: "CGST", data: 'cgst', "autoWidth": true },
+                                    { title: "IGST", data: 'igst', "autoWidth": true },
+                                    { title: "CESS", data: 'cess', "autoWidth": true },
+                                    { title: "CESS Non Advol", data: 'cessNonAdvol', "autoWidth": true },
+                                    { title: "Other Value", data: 'otherValue', "autoWidth": true },
+                                    { title: "Total Invoice", data: 'totalInvoice', "autoWidth": true },
+                                    {
+                                        title: "Valid Till Date", data: 'validTillDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eWayBillRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    { title: "Mode Of Generation", data: 'modeOfGeneration', "autoWidth": true },
+                                    { title: "Cancelled By", data: 'cancelledBy', "autoWidth": true },
+                                    {
+                                        title: "Cancelled Date", data: 'cancelledDate', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data.eWayBillRegistersList).format("@DateTimeFormat.StandardDateTime1");
+                                        //    //return moment(data).format('DD/MM/YYYY');
+                                        //}
+                                    },
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ]
+                                $('#filePreview').DataTable({
+                                    data: result.data.eWayBillRegistersList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+                            else if (type == "LIBLGR") {
+                                previewdDcument = [
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "GL Code", data: 'glCode', "autoWidth": true },
+                                    { title: "GL Description", data: 'glDescription', "autoWidth": true },
+                                    { title: "Document Type", data: 'documentType', "autoWidth": true },
+                                    { title: "Invoice No", data: 'invoiceReceiptDNCNNo', "autoWidth": true },
+                                    { title: "E Invoice No", data: 'eInvoiceNo', "autoWidth": true },
+                                    { title: "CGST", data: 'cgst', "autoWidth": true },
+                                    { title: "SGST", data: 'sgst', "autoWidth": true },
+                                    { title: "IGST", data: 'igst', "autoWidth": true },
+                                    { title: "CESS", data: 'cess', "autoWidth": true },
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ]
+                                $('#filePreview').DataTable({
+                                    data: result.data.liabilityLedgersList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+                            else if (type == "ADVREC") {
+                                previewdDcument = [
+                                    { title: "Id", data: 'id', "autoWidth": true },
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "Receipt Number", data: 'receiptNumber', "autoWidth": true },
+                                    {
+                                        title: "Date of Receipt", data: 'dateofReceipt', "autoWidth": true,
+                                        //"render": function (data) {
+                                        //    return moment(data).format("@DateTimeFormat.StandardDateTime1");
+                                        //}
+                                    },
+                                    { title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                    { title: "POS", data: 'pos', "autoWidth": true },
+                                    { title: "Type Of Supply", data: 'typeOfSupply', "autoWidth": true },
+                                    { title: "Taxable Value", data: 'taxableValue', "autoWidth": true },
+                                    { title: "Total Amendment Taxable Value (Balance)", data: 'totalAmendmentTaxableValue', "autoWidth": true },
+                                    { title: "Rate", data: 'rate', "autoWidth": true },
+                                    { title: "Cess Percentage", data: 'cessPercentage', "autoWidth": true },
+                                    { title: "CGST", data: 'cgst', "autoWidth": true },
+                                    { title: "SGST", data: 'sgst', "autoWidth": true },
+                                    { title: "IGST", data: 'igst', "autoWidth": true },
+                                    { title: "CESS", data: 'cess', "autoWidth": true },
+                                    { title: "Total Tax", data: 'totalTax', "autoWidth": true },
+                                    { title: "Total Invoice Value", data: 'totalInvoiceValue', "autoWidth": true },
+                                    { title: "Month", data: 'month', "autoWidth": true },
+                                    { title: "Year", data: 'year', "autoWidth": true }
+                                ]
+                                $('#filePreview').DataTable({
+                                    data: result.data.advanceReceivedList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+                            else if (type == "ITCR") {
+                                previewdDcument = [
+
+                                ]
+                            }
+                            else if (type == "ITCGLR") {
+                                previewdDcument = [
+
+                                ]
+                            }
+                            else if (type == "FOUTPUT") {
+                                previewdDcument = [
+                                    { title: "Document Type", data: 'document_Type', "autoWidth": true },
+                                    { title: "Invoice No", data: 'invoice_Number', "autoWidth": true },
+                                    { title: "E Invoice No", data: 'invoice_Date', "autoWidth": true },
+                                    { title: "Invoice Date", data: 'e_Invoice_No', "autoWidth": true, },
+                                    { title: "E Invoice Date", data: 'e_Invoice_Date', "autoWidth": true },
+                                    { title: "E Invoice Total Amount", data: 'e_Invoice_Total_Amount', "autoWidth": true,},
+                                    { title: "E Invoice Tax Amount", data: 'e_Invoice_Tax_Amount', "autoWidth": true },
+                                    { title: "E Invoice Amount Different", data: 'e_Invoice_Amount_Different', "autoWidth": true },
+                                    { title: "E Invoice Tax Different", data: 'e_Invoice_Tax_Different', "autoWidth": true },
+                                    { title: "Shipping Bill No", data: 'shipping_Bill_No', "autoWidth": true },
+                                    { title: "Shipping Bill Date", data: 'shipping_Bill_Date', "autoWidth": true },
+                                    { title: "NSN Code", data: 'hsN_Code', "autoWidth": true },
+                                    { title: "Quantity", data: 'quantity', "autoWidth": true },
+                                    { title: "Unique Quantity Code", data: 'unique_Quantity_Code', "autoWidth": true },
+                                    { title: "Description", data: 'description', "autoWidth": true },
+                                    { title: "Party Name", data: 'party_Name', "autoWidth": true },
+                                    { title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                    { title: "Reverse Charge", data: 'reverse_Charge', "autoWidth": true },
+                                    { title: "Place of Supply State Name", data: 'place_Of_Supply_State_Name', "autoWidth": true },
+                                    { title: "Exchange Rate As Per Notification ", data: 'exchange_Rate_As_Per_Notifications', "autoWidth": true },
+                                    { title: "Exchange Rate As Per Shipping Bill", data: 'exchange_Rate_As_Per_Shipping_Bill', "autoWidth": true },
+                                    { title: "Rate", data: 'rate', "autoWidth": true },
+                                    { title: "Total Tax", data: 'total_Tax', "autoWidth": true },
+                                    { title: "CGST", data: 'central_Tax', "autoWidth": true },
+                                    { title: "SGSTUTGST", data: 'state_UT_Tax', "autoWidth": true },
+                                    { title: "IGST", data: 'integrated_Tax', "autoWidth": true },
+                                    { title: "CESS", data: 'cess_Amount', "autoWidth": true },
+                                    { title: "Total Invoice Value Rs", data: 'total_Invoice_Value_Rs', "autoWidth": true },
+                                    { title: "Vehical No", data: 'vehicle_No', "autoWidth": true },
+                                    { title: "E Way Bill No", data: 'e_Way_Bill_No', "autoWidth": true },
+                                    { title: "Dispatch Location Code", data: 'dispatch_Location_Code', "autoWidth": true },
+                                    { title: "Port Code", data: 'port_Code', "autoWidth": true },
+                                    { title: "Voucher No", data: 'voucher_No', "autoWidth": true },
+                                    { title: "Accounting Date", data: 'accounting_Date', "autoWidth": true },
+                                    { title: "Location", data: 'location_Code', "autoWidth": true },
+                                    { title: "GL Code", data: 'gL_Code', "autoWidth": true },
+                                    { title: "E Invoice No 2", data: 'e_Invoice_No_2', "autoWidth": true },
+                                    { title: "E Invoice Date 2", data: 'e_Invoice_Date_2', "autoWidth": true },
+                                    { title: "E Way Bill No 2", data: 'e_Way_Bill_No_2', "autoWidth": true },
+                                    { title: "E Way Bill No 2", data: 'e_Way_Date_2', "autoWidth": true },
+                                    ]
+                                 $('#filePreview').DataTable({
+                                    data: result.data.finalOutputRegistersList,
+                                    ordering: false,
+                                    columns: previewdDcument,
+                                    destroy: true,
+                                });
+                                $("#myfilePreviewModal").modal("show");
+                            }
+
+
+                            //$('#filePreview').DataTable({
+                            //    data: result.data.supplyRegistersList,
+                            //    ordering: false,
+                            //    columns: previewdDcument,
+                            //    destroy: true,
+                            //});
+                            //$("#myfilePreviewModal").modal("show");
+                        },
+                        error: function () {
+                            $("#divLoader").hide();
+                            alert("error");
+                        }
+                    });
+                    return false;
+                }
+
+
+            });
+        });
+
+    </script>
+    }
+

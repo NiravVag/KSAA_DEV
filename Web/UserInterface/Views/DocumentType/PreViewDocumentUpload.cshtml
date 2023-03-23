@@ -1,0 +1,88 @@
+﻿<a href="~/DocumentType/DocumentTypeUpload" class="btn btn-primary btn-outline fancy-button btn-0" style="color: black; float: right;"> Document Upload File</a>
+
+@model IEnumerable<KSAA.Domain.Entities.DocumentUpload.GLIncomeRegister>
+
+<!-- Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">List of Document Type</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <div class="panel-heading">
+                                    <div class="pull-left"></div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="panel-wrapper collapse in">
+                                    <div class="panel-body">
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Invoice/ Receipt/ DN/ CN/ No</th>
+                                                        </tr>
+                                                    </thead>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td hidden>
+                                                                @Html.DisplayFor(modelItem => item.Id)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.DocumentType)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.InvoiceReceiptDNCNNo)
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    <tbody>
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Document Type</th>
+                                                            <th>Invoice/ Receipt/ DN/ CN/ No</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //debugger;
+        //$('#datable_1').DataTable({
+        //    "order": [[0, "desc"]]
+        //});
+
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+    });
+</script>

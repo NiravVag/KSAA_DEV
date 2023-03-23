@@ -1,0 +1,141 @@
+﻿@model IEnumerable<KSAA.Master.Application.DTOs.Master.ListDTOs.DocumentTypeListModel>
+
+
+<style>
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <a href="~/DocumentType/DocumentTypeAdd" class="btn btn-primary  mr-10" style="width: 140px; margin-top: 10px; float: right;margin-bottom: 10px;">ADD</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">List of Document Type</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                @*<div class="panel-heading">
+                                    <div class="pull-left"></div>
+                                    <div class="clearfix"></div>
+                                </div>*@
+                                <div class="panel-wrapper collapse in">
+                                    <div>
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30">
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden>Id</th>
+                                                            <th>Bill Type</th>
+                                                            <th>Document Code</th>
+                                                            <th>Document Type</th>
+                                                            <th>Our Software Processing</th>
+                                                            @*<th>IP</th>
+                                                            <th>BrowserCase</th>*@
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td hidden>
+                                                                @Html.DisplayFor(modelItem => item.Id)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.BillType)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.Document_Code)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.Document_Type)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.OurSoftwareProcessing)
+                                                            </td>
+                                                            @*<td>
+                                                        @Html.DisplayFor(modelItem => item.IP)
+                                                        </td>
+                                                        <td>
+                                                        @Html.DisplayFor(modelItem => item.BrowserCase)
+                                                        </td>*@
+                                                            <td class="text-nowrap">
+                                                                <a asp-route-id="@item.Id" asp-controller="DocumentType" asp-action="GetDocument" class="mr-25" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                                <a asp-route-id="@item.Id" asp-controller="DocumentType" asp-action="DeleteDocument" data-toggle="tooltip" data-original-title="Delete"> <i class="fa fa-close text-danger"></i> </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    <tbody>
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th hidden>Id</th>
+                                                            <th>Bill Type</th>
+                                                            <th>Document Code</th>
+                                                            <th>Document Type</th>
+                                                            <th>Our Software Processing</th>
+                                                            @*<th>IP</th>
+                                                            <th>BrowserCase</th>*@
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //debugger;
+        //$('#datable_1').DataTable({
+        //    "lengthChange": false,
+        //    "order": [[0, "desc"]]
+        //});
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+    });
+</script>

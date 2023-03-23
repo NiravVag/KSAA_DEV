@@ -1,0 +1,582 @@
+﻿@model KSAA.GL_Income.Application.DTOs.GLIncome.GL_IncomeListModel
+@using KSAA.Domain.Common
+
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Control Sheet</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        @*<form class="form-inline">*@
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+
+                            @*<select class="form-control selectpicker" name="month" id="month" data-style="btn-primary btn-outline" data-required-error="Month is required" required>
+                            <option value="">--- Select ---</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                            </select>
+                            <div class="help-block with-errors"></div>*@
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+
+                            @*<select class="form-control selectpicker" name="year" id="year" data-style="btn-info btn-outline" data-required-error="Year is required" required>
+                            <option value="">--- Select ---</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            </select>
+                            <div class="help-block with-errors"></div>*@
+                        </div>
+                        @*<button type="button" class="btn btn-success btn-anim" style="float:right"><i class="icon-rocket"></i><span class="btn-text">submit</span></button>*@
+                        <button class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 11px;" onclick="GenControlSheet()">Create Control Sheet</button>
+                        @*</form>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+@*<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark"></h6>
+                </div>
+                <div class="clearfix">
+                    <h4>Control Sheet</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->*@
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Row -->
+<div class="row">
+    @*<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div>
+    <div class="panel-heading">
+    <div class="clearfix">
+    <button class="btn btn-primary btn-outline fancy-button btn-0" style="color: black; float: left;" onclick="GenControlSheet()">Create Control Sheet</button>
+    </div>
+    </div>
+    </div>
+    </div>*@
+
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark"></h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="table-wrap ">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice Receipt DN Cn No.</th>
+                                        <th>GL Code</th>
+                                        <th>GL Description</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @if (Model.GL_IncomeData != null && Model.GL_IncomeData.Any())
+                                    {
+                                        @foreach (var data in Model.GL_IncomeData)
+                                        {
+                                            <tr>
+                                                <td>@data.Income_Booking_Resp_GL_ID</td>
+                                                <td>@data.GL_Code</td>
+                                                <td>@data.GL_Description</td>
+                                                <td>@data.Amount</td>
+                                            </tr>
+                                        }
+                                    }
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <th class="col-md-4">Total GL Income</th>
+                                        <td class="col-md-2">@Model.Sum_GL</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="table-wrap ">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+
+                                <tr>
+                                    <th class="col-md-3"></th>
+                                    <th class="col-md-3"></th>
+                                    <th class="col-md-3">Total Supply Register</th>
+                                    <td class="col-md-3">@Model.Sum_supply</td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th class="col-md-4">Difference</th>
+                                    <td class="col-md-2">@Model.diff</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="button-list mt-25">
+                        <a class="btn btn-primary btn-anim" id="Preview" data-toggle="modal" style="float: right; width:170px;"> Preview</a>
+                        <button class="btn btn-primary" style="float: right;width: 170px;" onclick="AddSL()">Add To Supply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table id="datable_1" class="table table-hover display  pb-30" style="white-space:nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>GL Code</th>
+                                        <th>Accounting Voucher</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                        <th>Date</th>
+                                        <th>HSN/SAC</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        @*<th>CESS</th>
+                                        <th>GSTIN</th>*@
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @if (Model.SupplyModels != null && Model.SupplyModels.Any())
+                                    {
+                                        @foreach (var data in Model.SupplyModels)
+                                        {
+                                            <tr>
+                                                <td>@data.GL_Code</td>
+                                                <td>@data.Accounting_voucher</td>
+                                                <td>@data.Amount</td>
+                                                <td>@data.Description</td>
+                                                <td>@data.Date</td>
+                                                <td>@data.HSN_SAC</td>
+                                                <td>@data.CGST</td>
+                                                <td>@data.SGST</td>
+                                                <td>@data.IGST</td>
+                                                @*<td>@data.CESS</td>
+                                        <td>@data.GSTIN</td>*@
+                                                <td>@data.Remarks</td>
+                                                <td>@data.Action</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <th>GL Code</th>
+                                        <th>Accounting Voucher</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                        <th>Date</th>
+                                        <th>HSN/SAC</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        @*<th>CESS</th>
+                                        <th>GSTIN</th>*@
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+@*bootstrap modal*@
+<!-- Row -->
+<div class="modal fade bs-example-modal-lg" id="myfilePreviewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" style="width:95% !important">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title" id="myfilePreviewModal">File Preview</h5>
+            </div>
+            <div class="modal-body">
+                <table id="filePreview" class="display" style="white-space: nowrap;  text-align:center;"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-left" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //debugger;
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+        $('#year').val(@ViewBag.Year);
+        //$('#datable_1').DataTable({
+        //    "lengthChange": false,
+        //    "order": [[0, "desc"]]
+        //});
+    });
+</script>
+
+@section Scripts{
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/vendors/bower_components/bootstrap-validator/dist/validator.js"></script>
+
+    <script type="text/javascript">
+        function GenControlSheet() {
+            if ($("#month").val() === '') {
+                //alert('Please Select Month');
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                //alert('Please Select Year');
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    //url: '@Url.Action("ControlSheetGen", "GL_Income")',
+                    url: `/GL_Income/ControlSheetGen?m=${month_value}&y=${year_value}`,
+                    //contentType: 'text/html',
+                    type: "POST",
+                    //cache: false,
+                    success: function(data) {
+                        //alert("Create Control Sheet Success");
+                        //window.location.reload();
+                        $("#divLoader").hide();
+                        console.log(data);
+                        $.toast({
+                            text: "Create Control Sheet Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6,
+                        })
+                        setTimeout(function() {
+                            window.location.href = "/GL_Income/GLIncomeControlSheet?m=" + month_value + "&y=" + year_value
+                        }, 2000);
+                    },
+                    error: function(jqXHR, textStatus, error) {
+                        //alert(data);
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                });
+            }
+        }
+
+        function AddSL() {
+            if ($("#month").val() === '') {
+                //alert('Please Select Month');
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                //alert('Please Select Year');
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    //url: '@Url.Action("AddToSupply", "GL_Income")',
+                    url: `/GL_Income/AddToSupply?m=${month_value}&y=${year_value}`,
+                    //contentType: 'text/html',
+                    type: "POST",
+                    //cache: false,
+                    success: function(data) {
+                        //alert("Added in SL Success");
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: "Added in SL Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6,
+                        })
+                        setTimeout(function() {
+                            //window.location.reload();
+                            window.location.href = "/GL_Income/GLIncomeControlSheet?m=" + month_value + "&y=" + year_value
+                        }, 2000);
+                    },
+                    error: function(jqXHR, textStatus, error) {
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#Preview").click(function() {
+                if ($("#month").val() === '') {
+                    $.toast({
+                        text: "Please Select Month",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+                if ($("#year").val() === '') {
+                    $.toast({
+                        text: "Please Select Year",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+                if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                    $("#divLoader").show();
+                    $.ajax({
+                        url: '/GL_Income/PreviewControlSheetDocument',
+                        type: 'POST',
+                        data: { month: $('#month').val(), year: $('#year').val() },
+                        success: function(result) {
+                            $("#divLoader").hide();
+
+                            $('#filePreview').DataTable({
+                                data: result,
+                                ordering: false,
+                                destroy: true,
+                                columns: [
+                                    { title: "Client Code", data: 'client_Code', "autoWidth": true },
+                                    { title: "GL Code", data: 'gL_Code', "autoWidth": true },
+                                    { title: "Invoice No", data: 'invoice_No', "autoWidth": true },
+                                    { title: "Accounting voucher", data: 'accounting_voucher', "autoWidth": true },
+                                    { title: "Amount", data: 'amount', "autoWidth": true },
+                                    { title: "Description", data: 'description', "autoWidth": true },
+                                    { title: "Date", data: 'date', "autoWidth": true },
+                                    //{
+                                    //    title: "Date", data: 'date', "autoWidth": true,
+                                    //    "render": function(data) {
+                                    //        return moment(data).format("@DateTimeFormat.StandardDateTime1");
+                                    //    }
+                                    //},
+                                    { title: "HSN SAC", data: 'hsN_SAC', "autoWidth": true },
+                                    { title: "CGST", data: 'cgst', "autoWidth": true },
+                                    { title: "SGST", data: 'sgst', "autoWidth": true },
+                                    { title: "IGST", data: 'igst', "autoWidth": true },
+                                    { title: "CESS", data: 'cess', "autoWidth": true },
+                                    { title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                    { title: "DataSource", data: 'dataSource', "autoWidth": true },
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ],
+                                'rowCallback': function(row, data, index) {
+                                    if (data['dataSource'] == 'BySystem - SL') {
+                                        $(row).css('background-color', '#90EE90');
+                                        $(row).find('td:eq(13)').css('color', 'blue');
+                                    }
+                                }
+                            });
+                            $("#myfilePreviewModal").modal("show");
+                        },
+                        error: function() {
+                            $("#divLoader").hide();
+                            alert("error");
+                        }
+                    });
+                    return false;
+                }
+
+
+            });
+        });
+
+    </script>
+}

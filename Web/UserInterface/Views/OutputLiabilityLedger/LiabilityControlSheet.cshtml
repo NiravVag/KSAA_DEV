@@ -1,0 +1,766 @@
+﻿@model KSAA.GL_Income.Application.DTOs.OutputLiability.OutputLiabilityListModel
+@using KSAA.Domain.Common
+
+@{
+    Layout = "~/Views/OutputLiabilityLedger/_LCLayout.cshtml";
+}
+
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+
+    /*body {
+                                            margin-bottom: 100px;
+                                        }*/
+
+    .row {
+        margin-bottom: 20px;
+    }
+
+    pre {
+        margin-top: 0;
+    }
+
+    .button.button-small {
+        height: 30px;
+        line-height: 30px;
+        padding: 0px 10px;
+    }
+
+    td input[type=text], td select {
+        /*width: 100%;*/
+        width: 100px;
+        height: 30px;
+        margin: 0;
+        padding: 2px 8px;
+    }
+
+    th:last-child {
+        text-align: right;
+    }
+
+    td:last-child {
+        text-align: right;
+    }
+
+        td:last-child .button {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            padding: 0px;
+            margin-bottom: 0px;
+            margin-right: 5px;
+            background-color: #FFF;
+        }
+
+            td:last-child .button .fa {
+                line-height: 30px;
+                width: 30px;
+            }
+</style>
+
+<link href="~/dist/css/font-awesome.min.css" rel="stylesheet">
+
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Liability Control Sheet</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        <button class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 11px;" onclick="GenLiabilityControlSheet()">Create Control Sheet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark"></h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="table-wrap ">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+
+                                <tr>
+                                    <th>Invoice Receipt DN Cn No.</th>
+                                    <th>GL Code</th>
+                                    <th>GL Description</th>
+                                    <th>CGST</th>
+                                    <th>SGST</th>
+                                    <th>IGST</th>
+                                    <th>Cess</th>
+                                </tr>
+                                @{
+                                    decimal SUM_CGSTLL = 0;
+                                    decimal SUM_SGSTLL = 0;
+                                    decimal SUM_IGSTLL = 0;
+                                    decimal SUM_CessLL = 0;
+                                }
+                                @if (Model.GL_IncomeData != null && Model.GL_IncomeData.Any())
+                                {
+                                    @foreach (var data in Model.GL_IncomeData)
+                                    {
+                                        <tr>
+                                            <td>@data.Income_Booking_Resp_GL_ID</td>
+                                            <td>@data.GL_Code</td>
+                                            <td>@data.GL_Description</td>
+                                            <td>@data.CGSTLL</td>
+                                            <td>@data.SGSTLL</td>
+                                            <td>@data.IGSTLL</td>
+                                            <td>@data.CessLL</td>
+                                        </tr>
+                                        SUM_CGSTLL = data.CGSTLL + SUM_CGSTLL;
+                                        SUM_SGSTLL = data.SGSTLL + SUM_SGSTLL;
+                                        SUM_IGSTLL = data.IGSTLL + SUM_IGSTLL;
+                                        SUM_CessLL = data.CessLL + SUM_CessLL;
+                                    }
+                                }
+
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <th class="col-md-4">Total GL</th>
+                                    <td>@SUM_CGSTLL</td>
+                                    <td>@SUM_SGSTLL</td>
+                                    <td>@SUM_IGSTLL</td>
+                                    <td>@SUM_CessLL</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="table-wrap ">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+
+                                <tr>
+                                    <th class="col-md-2"></th>
+                                    <th class="col-md-2"></th>
+                                    <th class="col-md-4">Total SL</th>
+                                    <td>@Model.Sum_CentralTaxSL</td>
+                                    <td>@Model.Sum_StateUTTaxSL</td>
+                                    <td>@Model.Sum_IntegratedTaxSL</td>
+                                    <td>@Model.Sum_CessAmountSL</td>
+                                </tr>
+                                <tr>
+                                    <th class="col-md-2"></th>
+                                    <th class="col-md-2"></th>
+                                    <th class="col-md-4">Difference</th>
+                                    <td>@Model.Sum_Difference_CGST</td>
+                                    <td>@Model.Sum_Difference_SGST</td>
+                                    <td>@Model.Sum_Difference_IGST</td>
+                                    <td>@Model.Sum_Difference_Cess</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="button-list mt-25">
+                        <a class="btn btn-primary btn-anim" id="Preview" data-toggle="modal" style="float: right; width:170px;"> Preview</a>
+                        @*<button class="btn btn-primary" style="float: right;width: 170px;" onclick="AddSL()">Add To Supply</button>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table id="edit_datable_2" class="table table-hover display  pb-30" style="white-space:nowrap">
+                                <thead>
+                                    <tr>
+                                        <th colspan="5" style="text-align:center; background-color:antiquewhite;">
+                                            Output Register / SL
+                                        </th>
+                                        <th colspan="5" style="text-align:center; background-color:aquamarine;">
+                                            Liability Register
+                                        </th>
+                                        <th colspan="4" style="text-align:center; background-color:cadetblue;">
+                                            Difference
+                                        </th>
+                                        <th colspan="2" style="text-align:center; background-color:darkcyan;">
+                                            Action
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Invoice No</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        <th>CESS</th>
+                                        <th>Invoice No</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        <th>CESS</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        <th>CESS</th>
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                @if (Model.outputRegisterModels != null && Model.outputRegisterModels.Any())
+                                {
+                                    @foreach (var data in Model.outputRegisterModels)
+                                    {
+                                        @if ((data.Remarks == "Mismatch") || (data.Remarks == "Error"))
+                                        {
+                                            <tr data-id="@data.Id">
+                                                <td>@data.Invoice_Number</td>
+                                                <td data-field="cgstsl">@data.Central_Tax</td>
+                                                <td data-field="sgstsl">@data.State_UT_Tax</td>
+                                                <td data-field="igstsl">@data.Integrated_Tax</td>
+                                                <td data-field="cesssl">@data.Cess_Amount</td>
+                                                <td>@data.Invoice_Number_LL</td>
+                                                <td data-field="cgstll">@data.CGSTLL</td>
+                                                <td data-field="sgstll">@data.SGSTLL</td>
+                                                <td data-field="igstll">@data.IGSTLL</td>
+                                                <td data-field="cessll">@data.CessLL</td>
+                                                <td>@data.Diffarances_CGST_SLLL</td>
+                                                <td>@data.Difference_SGST_SLLL</td>
+                                                <td>@data.Difference_IGST_SLLL</td>
+                                                <td>@data.Difference_Cess_SLLL</td>
+                                                <td>@data.Remarks</td>
+                                                <td>
+                                                    <a class="button button-small edit" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>@data.Invoice_Number</td>
+                                                <td>@data.Central_Tax</td>
+                                                <td>@data.State_UT_Tax</td>
+                                                <td>@data.Integrated_Tax</td>
+                                                <td>@data.Cess_Amount</td>
+                                                <td>@data.Invoice_Number_LL</td>
+                                                <td>@data.CGSTLL</td>
+                                                <td>@data.SGSTLL</td>
+                                                <td>@data.IGSTLL</td>
+                                                <td>@data.CessLL</td>
+                                                <td>@data.Diffarances_CGST_SLLL</td>
+                                                <td>@data.Difference_SGST_SLLL</td>
+                                                <td>@data.Difference_IGST_SLLL</td>
+                                                <td>@data.Difference_Cess_SLLL</td>
+                                                <td>@data.Remarks</td>
+                                                <td>
+                                                    
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+
+                                <tbody>
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <th>Invoice No</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        <th>CESS</th>
+                                        <th>Invoice No</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        <th>CESS</th>
+                                        <th>CGST</th>
+                                        <th>SGST</th>
+                                        <th>IGST</th>
+                                        <th>CESS</th>
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*bootstrap modal*@
+<!-- Row -->
+<div class="modal fade bs-example-modal-lg" id="myfilePreviewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" style="width:95% !important">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title" id="myfilePreviewModal">File Preview</h5>
+            </div>
+            <div class="modal-body">
+                <table id="filePreview" class="display" style="white-space: nowrap;  text-align:center;"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-left" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- jQuery -->
+<script src="~/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="~/dist/js/edittable/table-edits.js"></script>
+
+@*@section Scripts{*@
+
+<script type="text/javascript">
+    //$("table tr").editable(OPTIONS);
+    //alert("test");
+    $(document).ready(function() {
+        //alert("test 2");
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#edit_datable_2').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+        $('#year').val(@ViewBag.Year);
+    });
+    $(function() {
+        //alert("1");
+        $('table tr').editable({
+            dblclick: false,
+            edit: function(values) {
+                $(".edit i", this)
+                    .removeClass('fa-pencil')
+                    .addClass('fa-save')
+                    .attr('title', 'Save');
+            },
+            save: function(values) {
+                $(".edit i", this)
+                    .removeClass('fa-save')
+                    .addClass('fa-pencil')
+                    .attr('title', 'Edit');
+
+                var id = $(this).data('id');
+                //var Invoice_Number = $(this).data('invoice_Number');
+                //var Invoice_Number_LL = $(this).data('invoice_Number_LL');
+
+                //updateLiabilityRegisterData(id,Invoice_Number,Invoice_Number_LL,values);
+                updateLiabilityRegisterData(id, values);
+            },
+            cancel: function(values) {
+                $(".edit i", this)
+                    .removeClass('fa-save')
+                    .addClass('fa-pencil')
+                    .attr('title', 'Edit');
+            }
+        });
+    });
+
+    function updateLiabilityRegisterData(id, values) {
+        //alert('Save Data');
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        var obj = {
+            Id: id,
+            //Invoice_Number: $("#invoice_Number").val(),
+            Central_Tax: values.cgstsl,
+            State_UT_Tax: values.sgstsl,
+            Integrated_Tax: values.igstsl,
+            Cess_Amount: values.cesssl,
+            //Invoice_Number_LL: $("#invoice_Number_LL").val(),
+            CGSTLL: values.cgstll,
+            SGSTLL: values.sgstll,
+            IGSTLL: values.igstll,
+            CessLL: values.cessll,
+            Month: month_value,
+            Year: year_value
+        };
+        if (($("#Id").val() !== '') && ($("#Id").val() !== '-1') && ($("#Id").val() !== null)) {
+            $("#divLoader").show();
+            $.ajax({
+                url: '/OutputLiabilityLedger/UpdateLiabilityControlDataById',
+                method: 'POST',
+                data: obj,
+                success: function(data) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: "Data as per Updated Success",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6,
+                    })
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                },
+                error: function(result) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: "Data as per Invoice Not Tag",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6,
+                    });
+                }
+            });
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function GenLiabilityControlSheet() {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+            $("#divLoader").show();
+            $.ajax({
+                //url: '@Url.Action("GenLiabilityControlSheet", "OutputLiabilityLedger")',
+                url: `/OutputLiabilityLedger/GenLiabilityControlSheet?m=${month_value}&y=${year_value}`,
+                //contentType: 'text/html',
+                type: "POST",
+                //cache: false,
+                success: function(data) {
+                    //window.location.reload();
+                    $("#divLoader").hide();
+                    console.log(data);
+                    $.toast({
+                        text: "Create Liability Control Sheet Success",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6,
+                    })
+                    setTimeout(function() {
+                        window.location.href = "/OutputLiabilityLedger/LiabilityControlSheet?m=" + month_value + "&y=" + year_value
+                    }, 2000);
+                },
+                error: function(jqXHR, textStatus, error) {
+                    //alert(data);
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: jqXHR.responseJSON.message,
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                }
+            });
+        }
+    }
+    function AddSL() {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+            $("#divLoader").show();
+            $.ajax({
+                //url: '@Url.Action("AddToSupply", "GL_Income")',
+                url: `/OutputLiabilityLedger/AddToSupply?m=${month_value}&y=${year_value}`,
+                contentType: 'text/html',
+                type: "POST",
+                cache: false,
+                success: function(data) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: "Added in SL Success",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6,
+                    })
+                    setTimeout(function() {
+                        //window.location.reload();
+                        window.location.href = "/OutputLiabilityLedger/LiabilityControlSheet?m=" + month_value + "&y=" + year_value
+                    }, 2000);
+                },
+                error: function(jqXHR, textStatus, error) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: jqXHR.responseJSON.message,
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                }
+            });
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#Preview").click(function() {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    url: '/OutputLiabilityLedger/PreviewOutputLiabilityDocument',
+                    type: 'POST',
+                    data: { month: $('#month').val(), year: $('#year').val() },
+                    success: function(result) {
+                        $("#divLoader").hide();
+                        //debugger;
+                        $('#filePreview').DataTable({
+                            data: result,
+                            ordering: false,
+                            destroy: true,
+                            columns: [
+                                { title: "Client Code", data: 'client_Code', "autoWidth": true },
+                                { title: "Document Type", data: 'document_Type', "autoWidth": true },
+                                { title: "Invoice No", data: 'invoice_Number', "autoWidth": true },
+                                { title: "Invoice Date", data: 'invoice_Date', "autoWidth": true },
+                                { title: "E Invoice No", data: 'e_Invoice_No', "autoWidth": true },
+                                { title: "E Invoice Date", data: 'e_Invoice_Date', "autoWidth": true },
+                                { title: "E Invoice Total_Amount", data: 'e_Invoice_Total_Amount', "autoWidth": true },
+                                { title: "E Invoice Tax Amount", data: 'e_Invoice_Tax_Amount', "autoWidth": true },
+                                { title: "E Invoice Amount Different", data: 'e_Invoice_Amount_Different', "autoWidth": true },
+                                { title: "E Invoice Tax Different", data: 'e_Invoice_Tax_Different', "autoWidth": true },
+                                { title: "Shipping Bill No", data: 'shipping_Bill_No', "autoWidth": true },
+                                { title: "Shipping Bill Date", data: 'shipping_Bill_Date', "autoWidth": true },
+                                { title: "HSN Code", data: 'hsN_Code', "autoWidth": true },
+                                { title: "Quantity", data: 'quantity', "autoWidth": true },
+                                { title: "Unique Quantity Code", data: 'unique_Quantity_Code', "autoWidth": true },
+                                { title: "Description", data: 'description', "autoWidth": true },
+                                { title: "Party Name", data: 'party_Name', "autoWidth": true },
+                                { title: "GSTIN", data: 'gstin', "autoWidth": true },
+                                { title: "Reverse Charge", data: 'reverse_Charge', "autoWidth": true },
+                                { title: "Place Of Supply State Name", data: 'place_Of_Supply_State_Name', "autoWidth": true },
+                                { title: "Exchange Rate As Per Notifications", data: 'exchange_Rate_As_Per_Notifications', "autoWidth": true },
+                                { title: "Exchange Rate As Per Shipping_Bill", data: 'exchange_Rate_As_Per_Shipping_Bill', "autoWidth": true },
+                                { title: "Taxable Value", data: 'taxable_Value', "autoWidth": true },
+                                { title: "Rate", data: 'rate', "autoWidth": true },
+                                { title: "Total Tax", data: 'total_Tax', "autoWidth": true },
+                                { title: "Central Tax", data: 'central_Tax', "autoWidth": true },
+                                { title: "State UT Tax", data: 'state_UT_Tax', "autoWidth": true },
+                                { title: "Integrated Tax", data: 'integrated_Tax', "autoWidth": true },
+                                { title: "Cess Amount", data: 'cess_Amount', "autoWidth": true },
+                                { title: "Total Invoice Value Rs", data: 'total_Invoice_Value_Rs', "autoWidth": true },
+                                { title: "Vehicle No", data: 'vehicle_No', "autoWidth": true },
+                                { title: "E Way Bill No", data: 'e_Way_Bill_No', "autoWidth": true },
+                                { title: "Dispatch Location Code", data: 'dispatch_Location_Code', "autoWidth": true },
+                                { title: "Port Code", data: 'port_Code', "autoWidth": true },
+                                { title: "Voucher No", data: 'voucher_No', "autoWidth": true },
+                                { title: "Accounting Date", data: 'accounting_Date', "autoWidth": true },
+                                { title: "Location Code", data: 'location_Code', "autoWidth": true },
+                                { title: "GL Code", data: 'gL_Code', "autoWidth": true },
+                                { title: "E Invoice No 2", data: 'e_Invoice_No_2', "autoWidth": true },
+                                { title: "E Invoice Date 2", data: 'e_Invoice_Date_2', "autoWidth": true },
+                                { title: "E Way Bill No 2", data: 'e_Way_Bill_No_2', "autoWidth": true },
+                                { title: "E Way Date 2", data: 'e_Way_Date_2', "autoWidth": true },
+                                { title: "Remarks", data: 'remarks', "autoWidth": true },
+                                { title: "Action", data: 'action', "autoWidth": true },
+
+                            ],
+                            //'rowCallback': function (row, data, index) {
+                            //    if (data['dataSource'] == 'BySystem - SL') {
+                            //        $(row).css('background-color', '#90EE90');
+                            //        $(row).find('td:eq(13)').css('color', 'blue');
+                            //    }
+                            //}
+                        });
+                        $("#myfilePreviewModal").modal("show");
+                    },
+                    error: function() {
+                        $("#divLoader").hide();
+                        alert("error");
+                    }
+                });
+                return false;
+            }
+        });
+    });
+
+</script>
+
+@*}*@

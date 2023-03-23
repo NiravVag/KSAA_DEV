@@ -1,0 +1,737 @@
+﻿@model KSAA.GL_Income.Application.DTOs.ComparisonReport.ComparisonReportSLEInvoiceListModel
+@using KSAA.Domain.Common
+
+@{
+    var actions = new List<SelectListItem>()
+    {
+    new SelectListItem (){Value="No Action",Text="No Action"},
+    new SelectListItem (){Value="Data as per E-Invoice",Text="Data as per E-Invoice"},
+    new SelectListItem (){Value="Data as per Supply",Text="Data as per Supply"},
+    };
+}
+
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+
+<div class="row pt-20">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Comparison Sheet</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        @*<form class="form-inline">*@
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+
+                            @*<select class="form-control selectpicker" name="month" id="month" data-style="btn-primary btn-outline" data-required-error="Month is required" required>
+                            <option value="">--- Select ---</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                            </select>*@
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+
+                            @*<select class="form-control selectpicker" name="year" id="year" data-style="btn-info btn-outline" data-required-error="Year is required" required>
+                            <option value="">--- Select ---</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            </select>*@
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        @*<button type="button" class="btn btn-success btn-anim" style="float:right"><i class="icon-rocket"></i><span class="btn-text">submit</span></button>*@
+                        @*<button class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 11px;" onclick="GenControlSheet()">Create Control Sheet</button>*@
+                        @*</form>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <a class="btn btn-primary btn-anim" id="Preview" data-toggle="modal" style="float: right; width:170px; margin-left:10px !important;"> Preview</a>
+            <a class="btn btn-primary" onclick="GenCompairsonSheetSLEWay()" style="float: right; margin-left:10px !important;">Compare SL with E-Way Bill Reg</a>
+            <a class="btn btn-primary" onclick="GenCompairsonSheetSLEInvoice()" style="float: right;">Compare SL with E-Invoice Bill Reg</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">Compare SL with E-Invoice Bill Reg</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                @*<div class="panel-heading">
+                                <div class="pull-left"></div>
+                                <div class="clearfix"></div>
+                                </div>*@
+                                <div class="panel-wrapper collapse in">
+                                    <div>
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30" style="white-space: nowrap;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="7" style="text-align:center; background-color:antiquewhite;">
+                                                                As per E-Invoice Bill Portal
+                                                            </th>
+                                                            <th colspan="4" style="text-align:center; background-color:aquamarine;">
+                                                                As per Supply Register
+                                                            </th>
+                                                            <th colspan="2" style="text-align:center; background-color:cadetblue;">
+                                                                Difference
+                                                            </th>
+                                                            <th colspan="2" style="text-align:center; background-color:darkcyan;">
+                                                                Action
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>E Invoice Bill No</th>
+                                                            <th>E Invoice Bill Date</th>
+                                                            <th>Invoice Number</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Invoice Value</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Invoice Number</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Tax</th>
+                                                            <th>Remarks</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    @if (Model.ComparSLInvoiceList != null && Model.ComparSLInvoiceList.Any())
+                                                    {
+                                                        @foreach (var data in Model.ComparSLInvoiceList)
+                                                        {
+                                                            <tr>
+                                                                <td>@data.E_Invoice_Bill_No</td>
+                                                                <td>@data.E_invoice_Bill_Date</td>
+                                                                <td>@data.Invoice_Number</td>
+                                                                <td>@data.Invoice_Date</td>
+                                                                <td>@data.Invoice_Value</td>
+                                                                <td>@data.Taxable_Value_E_Invoice</td>
+                                                                <td>@data.Total_Tax_E_Invoice</td>
+                                                                <td>@data.Invoice_Number_SL </td>
+                                                                <td>@data.Invoice_Date_SL</td>
+                                                                <td>@data.Taxable_Value_SL</td>
+                                                                <td>@data.Total_Tax_SL</td>
+                                                                <td>@data.Taxable_Value_Diff_Invoice</td>
+                                                                <td>@data.Tax_Value_Diff_Invoice</td>
+                                                                <td>@data.Remarks_E_Invoice</td>
+                                                                @*<td>@data.Actions_E_Invoice</td>*@
+                                                                <td>
+                                                                    @if ((data.Remarks_E_Invoice == "Record only in SL") || (data.Remarks_E_Invoice == "Record only in E-Invoice"))
+                                                                    {
+                                                                        <select id="SL_E_InvoiceDisable" asp-items="@(new SelectList(actions,nameof(SelectListItem.Value),nameof(SelectListItem.Text),@data.Actions_E_Invoice))" value="@data.Actions_E_Invoice" data-theme="a" data-mini="true" name="sleinvoice" disabled>
+                                                                        </select>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <select id="SL_E_Invoice" asp-items="@(new SelectList(actions,nameof(SelectListItem.Value),nameof(SelectListItem.Text),@data.Actions_E_Invoice))" value="@data.Actions_E_Invoice" data-theme="a" data-mini="true" name="sleinvoice" onchange="SLEInvoiceUpdateAction(this,@data.Comparison_Report_E_Invoice_Portal_ID)">
+                                                                        </select>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    <tbody>
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>E Invoice Bill No</th>
+                                                            <th>E Invoice Bill Date</th>
+                                                            <th>Invoice Number</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Invoice Value</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Invoice Number</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Tax</th>
+                                                            <th>Remarks</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+@*bootstrap modal*@
+<!-- Row -->
+<div class="modal fade bs-example-modal-lg" id="myfilePreviewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    @*<div class="modal-dialog modal-lg" style="width:1200px">*@
+    <div class="modal-dialog modal-lg" style="width:95% !important">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title" id="myfilePreviewModal">File Preview</h5>
+            </div>
+            <div class="modal-body">
+                <table id="filePreview" class="display" style="white-space: nowrap;  text-align:center;"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-left" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //debugger;
+        //$('#datable_1').DataTable({
+        //    "lengthChange": false,
+        //    "order": [[0, "desc"]]
+        //});
+
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+        $('#year').val(@ViewBag.Year);
+    });
+</script>
+
+@section Scripts{
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/vendors/bower_components/bootstrap-validator/dist/validator.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="https://unpkg.com/sweetalert2@7.8.2/dist/sweetalert2.all.js"></script>
+
+    <script type="text/javascript">
+        function GenCompairsonSheetSLEInvoice() {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+            var action_value = "SL_Invoice";
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    url: `/ComparisonReportSL/GenrateComparisonSheetSLEinvoice?m=${month_value}&y=${year_value}`,
+                    type: "POST",
+                    success: function(data) {
+                        //window.location.reload();
+                        $("#divLoader").hide();
+                        console.log(data);
+                        $.toast({
+                            text: "Create Comparison Sheet Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6,
+                        })
+                        setTimeout(function() {
+                            //getComparisonReport(month_value, year_value, action_value);
+                            window.location.href = "/ComparisonReportSL/ComparisonSheetSLInvoice?m=" + month_value + "&y=" + year_value + "&a=" + action_value;
+                        }, 2000);
+                    },
+                    error: function(jqXHR, textStatus, error) {
+                        //alert(data);
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                });
+            }
+        }
+
+        //function getComparisonReport(month_value, year_value, action_value) {
+        //    if (month_value != -1 && year_value != -1 && action_value != "") {
+        //        $("#divLoader").show();
+        //        $.ajax({
+        //            type: "POST",
+        //            url: `/ComparisonReportSL/ComparisonSheetSLInvoice?m=${month_value}&y=${year_value}&a=${action_value}`,
+        //            success: function(res) {
+        //                $("#divLoader").hide();
+        //                window.location.reload();
+        //                //$('#datable_1').DataTable({
+        //                //    data: res,
+        //                //    ordering: false,
+        //                //    destroy: true,
+        //                //});
+        //            }
+        //        })
+        //    }
+        //}
+
+        function GenCompairsonSheetSLEWay() {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+            var action_value = "SL_E_Way";
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    url: `/ComparisonReportSL/UpdateComparisonSheetSLEWay?m=${month_value}&y=${year_value}`,
+                    type: "POST",
+                    success: function(data) {
+                        //window.location.reload();
+                        $("#divLoader").hide();
+                        console.log(data);
+                        $.toast({
+                            text: "Create Comparison Sheet Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6,
+                        })
+                        setTimeout(function() {
+                            window.location.href = "/ComparisonReportSL/ComparisonSheetSLEWay?m=" + month_value + "&y=" + year_value + "&a=" + action_value;
+                        }, 2000);
+                    },
+                    error: function(jqXHR, textStatus, error) {
+                        //alert(data);
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                });
+            }
+        }
+
+        function SLEInvoiceUpdateAction(action, Comparison_Report_E_Invoice_Portal_ID) {
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                })
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            }
+
+            var action = action.value;
+            var id = Comparison_Report_E_Invoice_Portal_ID;
+            var updateType = "SL_E_Invoice";
+            var year_value = $('#year :selected').val();
+
+            if ($("#year").val() !== '') {
+                if (action == "Data as per E-Invoice") {
+                    //var alertMsg = "Do you want to update the data as per E-Invoice";
+                    //alert(alertMsg);
+                    swal({
+                        title: "Are you sure?",
+                        text: "Do you want to update the data as per E-Invoice",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                        allowOutsideClick: !1
+                    }).then(function(t) {
+                        if (t) {
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("SLEInvoiceUpdateAction", "ComparisonReportSL")',
+                                data: { action: action, id: id, updateType: updateType, year: year_value },
+                                dataType: "json",
+                                cache: false,
+                                success: function(result) {
+                                    if (result.statusCode) {
+                                        $.toast({
+                                            text: "Data as per E Invoice Updated",
+                                            position: 'top-right',
+                                            loaderBg: '#f8b32d',
+                                            icon: 'success',
+                                            hideAfter: 3500,
+                                            stack: 6,
+                                        })
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                    else {
+                                        $.toast({
+                                            text: "Data as per E Invoice Not Updated",
+                                            position: 'top-right',
+                                            loaderBg: '#f8b32d',
+                                            icon: 'error',
+                                            hideAfter: 3500,
+                                            stack: 6,
+                                        });
+                                    }
+                                },
+                                error: function(result) {
+                                    $.toast({
+                                        text: "Data as per E Invoice Not Updated",
+                                        position: 'top-right',
+                                        loaderBg: '#f8b32d',
+                                        icon: 'error',
+                                        hideAfter: 3500,
+                                        stack: 6,
+                                    });
+                                },
+                                complete: function() {
+                                    addRemoveLoader(true);
+                                },
+                            });
+                        }
+                    });
+                }
+                else if (action == "Data as per Supply") {
+                    //var alertMsg = "Do you want to update the data as per Supply";
+                    //alert(alertMsg);
+                    swal({
+                        title: "Are you sure?",
+                        text: "Do you want to update the data as per Supply",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                        allowOutsideClick: !1
+                    }).then(function(t) {
+                        if (t) {
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("SLEInvoiceUpdateAction", "ComparisonReportSL")',
+                                data: { action: action, id: id, updateType: updateType, year: year_value },
+                                dataType: "JSON",
+                                cache: false,
+
+                                success: function(result) {
+                                    if (result.statusCode) {
+                                        $.toast({
+                                            text: "Data as per Supply Updated",
+                                            position: 'top-right',
+                                            loaderBg: '#f8b32d',
+                                            icon: 'success',
+                                            hideAfter: 3500,
+                                            stack: 6,
+                                        })
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                    else {
+                                        $.toast({
+                                            text: "Data as per Supply Not Updated",
+                                            position: 'top-right',
+                                            loaderBg: '#f8b32d',
+                                            icon: 'error',
+                                            hideAfter: 3500,
+                                            stack: 6,
+                                        });
+                                    }
+                                },
+                                error: function(result) {
+                                    $.toast({
+                                        text: "Data as per Supply Not Updated",
+                                        position: 'top-right',
+                                        loaderBg: '#f8b32d',
+                                        icon: 'error',
+                                        hideAfter: 3500,
+                                        stack: 6,
+                                    });
+                                },
+                                complete: function() {
+                                    addRemoveLoader(true);
+                                },
+                            });
+                        }
+                    });
+                }
+
+                else {
+                    swal({
+                        title: "Are you sure?",
+                        text: "Do you want to update the data as per No Action",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                        allowOutsideClick: !1
+                    }).then(function(t) {
+                        if (t) {
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("SLEInvoiceUpdateAction", "ComparisonReportSL")',
+                                data: { action: action, id: id, updateType: updateType, year: year_value },
+                                dataType: "JSON",
+                                cache: false,
+                                success: function(result) {
+                                    if (result.statusCode) {
+                                        $.toast({
+                                            text: "Data as per No Action Updated",
+                                            position: 'top-right',
+                                            loaderBg: '#f8b32d',
+                                            icon: 'success',
+                                            hideAfter: 3500,
+                                            stack: 6,
+                                        })
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                    else {
+                                        $.toast({
+                                            text: "Data as per No Action Not Updated",
+                                            position: 'top-right',
+                                            loaderBg: '#f8b32d',
+                                            icon: 'error',
+                                            hideAfter: 3500,
+                                            stack: 6,
+                                        });
+                                    }
+                                },
+                                error: function(result) {
+                                    $.toast({
+                                        text: "Data as per No Action Not Updated",
+                                        position: 'top-right',
+                                        loaderBg: '#f8b32d',
+                                        icon: 'error',
+                                        hideAfter: 3500,
+                                        stack: 6,
+                                    });
+                                },
+                                complete: function() {
+                                    addRemoveLoader(true);
+                                },
+                            });
+                        }
+                    });
+                }
+            }
+        }
+
+        $(document).ready(function() {
+            $("#Preview").click(function() {
+                if ($("#month").val() === '') {
+                    $.toast({
+                        text: "Please Select Month",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+                if ($("#year").val() === '') {
+                    $.toast({
+                        text: "Please Select Year",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return;
+                }
+
+                var month_value = $('#month :selected').val();
+                var year_value = $('#year :selected').val();
+                var action_value = "SL_Invoice";
+                if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                    $("#divLoader").show();
+                    $.ajax({
+                        url: `/ComparisonReportSL/PreviewSLDocument?m=${month_value}&y=${year_value}&a=${action_value}`,
+                        type: 'POST',
+                        success: function(result) {
+                            $("#divLoader").hide();
+                            $('#filePreview').DataTable({
+                                data: result,
+                                ordering: false,
+                                order: [[0, 'desc']],
+                                destroy: true,
+                                columns: [
+                                    //{ title: "Client Code", data: 'clientCode', "autoWidth": true },
+                                    { title: "E Invoice Bill No", data: 'e_Invoice_Bill_No', "autoWidth": true },
+                                    {
+                                        title: "E invoice Bill Date", data: 'e_invoice_Bill_Date', "autoWidth": true,
+                                        "render": function(data) {
+                                            return moment(data).format("@DateTimeFormat.StandardDateTime1");
+                                        }
+                                    },
+                                    { title: "Invoice Number", data: 'invoice_Number', "autoWidth": true },
+                                    {
+                                        title: "Invoice Date", data: 'invoice_Date', "autoWidth": true,
+                                        "render": function(data) {
+                                            return moment(data).format("@DateTimeFormat.StandardDateTime1");
+                                        }
+                                    },
+                                    { title: "Invoice Value", data: 'invoice_Value', "autoWidth": true },
+                                    { title: "Taxable Value E Invoice", data: 'taxable_Value_E_Invoice', "autoWidth": true },
+                                    { title: "Total Tax E Invoice", data: 'total_E_Invoice_Tax', "autoWidth": true },
+                                    { title: "Invoice Number SL", data: 'invoice_Number_SL', "autoWidth": true },
+                                    {
+                                        title: "Invoice Date SL", data: 'invoice_Date_SL', "autoWidth": true,
+                                        "render": function(data) {
+                                            return moment(data).format("@DateTimeFormat.StandardDateTime1");
+                                        }
+                                    },
+                                    { title: "Taxable Value SL", data: 'taxable_Value_SL', "autoWidth": true },
+                                    { title: "Total Tax SL", data: 'total_SL_Tax', "autoWidth": true },
+                                    { title: "Taxable Value Diff Invoice", data: 'taxable_Value_Diff_Invoice', "autoWidth": true },
+                                    { title: "Tax Value Diff Invoice", data: 'tax_Value_Diff_Invoice', "autoWidth": true },
+                                    { title: "Remarks E Invoice", data: 'remarks_E_Invoice', "autoWidth": true },
+                                    //{ title: "Actions E Invoice", data: 'actions_E_Invoice', "autoWidth": true }
+                                    //{ title: "Month", data: 'month', "autoWidth": true },
+                                    //{ title: "Year", data: 'year', "autoWidth": true }
+                                ]
+                            });
+                            $("#myfilePreviewModal").modal("show");
+                        },
+                        error: function() {
+                            $("#divLoader").hide();
+                            alert("error");
+                        }
+                    });
+                    return false;
+                }
+
+
+            });
+        });
+    </script>
+}

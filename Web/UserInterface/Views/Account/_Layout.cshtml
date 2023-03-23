@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" href="~/images/ksaa-logo.png" type="image/icon type">
+    <title>KSAA</title>
+    <!-- vector map CSS -->
+    <link href="~/vendors/bower_components/jasny-bootstrap/dist/css/jasny-bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/vendors/bower_components/jquery-toast-plugin/dist/jquery.toast.min.css" rel="stylesheet" type="text/css">
+
+     <!-- Custom CSS -->
+    <link href="~/dist/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!--Preloader-->
+    <div class="preloader-it">
+        <div class="la-anim-1"></div>
+    </div>
+    <!--/Preloader-->
+
+    <div class="wrapper pa-0">
+        <header class="sp-header">
+            <div class="sp-logo-wrap pull-left">
+                <img class="brand-img mr-10" src="~/images/ksaa-logo.png" alt="brand" />
+            </div>
+            <div class="form-group mb-0 pull-right">
+                @await RenderSectionAsync("AccountHeader",false)
+            </div>
+            <div class="clearfix"></div>
+        </header>
+        <div class="page-wrapper pa-0 ma-0 auth-page">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- JavaScript -->
+    <!-- jQuery -->
+    <script src="~/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/vendors/bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.min.js"></script>
+
+    <!-- Slimscroll JavaScript -->
+    <script src="~/dist/js/jquery.slimscroll.js"></script>
+
+    <!-- Init JavaScript -->
+    <script src="~/dist/js/init.js"></script>
+    <!-- Toast JavaScript -->
+    <script src="~/vendors/bower_components/jquery-toast-plugin/src/jquery.toast.js"></script>
+    @await RenderSectionAsync("Scripts",false);
+</body>
+</html>

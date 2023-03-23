@@ -1,0 +1,26 @@
+﻿using KSAA.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KSAA.Master.Application.DTOs.Master.ListDTOs
+{
+    public class GSTOutputLiabilityCodesListModel
+    {
+        public long Id { get; set; }
+        public string? CustomerCode { get; set; }
+        public string? GLLiabilityName { get; set; }
+        public string? GLLiabilityCode { get; set; }
+        //public string? Upload { get; set; }
+        public string? LedgerMapping { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string? ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public IsActive IsActive { get; set; }
+        public string? IP { get; set; }
+        public string? BrowserCase { get; set; }
+    }
+}

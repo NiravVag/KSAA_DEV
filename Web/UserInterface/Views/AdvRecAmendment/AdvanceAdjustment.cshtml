@@ -1,0 +1,800 @@
+﻿@model KSAA.GL_Income.Application.DTOs.AdvanceRecAdj.AdvanceAdjustmentViewModel
+@using KSAA.Domain.Common
+
+<style>
+    #filePreview_wrapper {
+        overflow: auto;
+    }
+
+    #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+
+    fieldset {
+        background-color: #eeeeee;
+    }
+
+    legend {
+        background-color: gray;
+        color: white;
+        padding: 5px 10px;
+    }
+
+    input {
+        margin: 5px;
+    }
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h6 class="panel-title txt-dark">Advance Adjustment</h6>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                                    asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        @*<a class="btn btn-primary" onclick="AdvanceAdjustmentList()" style="float: right; margin-left:10px !important;">Generate Advance Adjustment</a>*@
+                        <button class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 16px;" onclick="AdvanceAdjustmentList()">Generate Advance Adjustment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <div class="panel-heading">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <h6 class="txt-dark capitalize-font">Advance Adjustment</h6>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                @*<div class="panel-heading">
+                                <div class="pull-left"></div>
+                                <div class="clearfix"></div>
+                                </div>*@
+                                <div class="panel-wrapper collapse in">
+                                    <div>
+                                        <div class="table-wrap">
+                                            <div class="table-responsive">
+                                                <table id="datable_1" class="table table-hover display pb-30" style="white-space: nowrap;">
+                                                    <thead>
+                                                        @*<tr>
+                                                        <th colspan="14" style="text-align:center; background-color:antiquewhite;">
+                                                        Data as per Advance Register
+                                                        </th>
+                                                        <th colspan="1" style="text-align:center; background-color:darkcyan;">
+                                                        Action
+                                                        </th>
+                                                        </tr>*@
+                                                        <tr>
+                                                            <th>Recipt Number</th>
+                                                            <th>Date Of Adjustment</th>
+                                                            <th>GSTIN</th>
+                                                            <th>PoS</th>
+                                                            <th>Type Of Supply</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Total Amendment Taxable Value (Balance)</th>
+                                                            <th>Rate</th>
+                                                            <th>Cess%</th>
+                                                            <th>CGST</th>
+                                                            <th>SGST</th>
+                                                            <th>IGST</th>
+                                                            <th>Cess</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Total receipt Value</th>
+                                                            <th>Action</th>
+
+                                                        </tr>
+                                                    </thead>
+
+                                                    @if (Model.AdvanceAdjustmentList != null && Model.AdvanceAdjustmentList.Any())
+                                                    {
+                                                        @foreach (var data in Model.AdvanceAdjustmentList)
+                                                        {
+                                                            <tr>
+                                                                <td>@data.ReceiptNumber</td>
+                                                                <td>@data.Dateofadjustment</td>
+                                                                <td>@data.GSTIN</td>
+                                                                <td>@data.POS</td>
+                                                                <td>@data.Typeofsupply</td>
+                                                                <td>@data.TaxableValue</td>
+                                                                @if (data.TotalAmendmentTaxableValue > 0)
+                                                                {
+                                                                    <td>@data.TotalAmendmentTaxableValue</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>0.00</td>
+                                                                }
+                                                                <td>@data.Rate</td>
+                                                                <td>@data.CessPercentage </td>
+                                                                <td>@data.CGST</td>
+                                                                <td>@data.SGST</td>
+                                                                <td>@data.IGST</td>
+                                                                <td>@data.Cess</td>
+                                                                <td>@data.TotalTax</td>
+                                                                <td>@data.TotalreceiptValue</td>
+                                                                <td>
+                                                                    @if (data.TotalAmendmentTaxableValue > 0)
+                                                                    {
+                                                                        <a class="btn btn-primary btn-anim" style="float: right; width:170px; margin-left:10px !important;" onclick="AddTagInvoice(@data.Id)">Tag Invoice</a>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    <tbody>
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Recipt Number</th>
+                                                            <th>Date Of Adjustment</th>
+                                                            <th>GSTIN</th>
+                                                            <th>PoS</th>
+                                                            <th>Type Of Supply</th>
+                                                            <th>Taxable Value</th>
+                                                            <th>Total Amendment Taxable Value (Balance)</th>
+                                                            <th>Rate</th>
+                                                            <th>Cess%</th>
+                                                            <th>CGST</th>
+                                                            <th>SGST</th>
+                                                            <th>IGST</th>
+                                                            <th>Cess</th>
+                                                            <th>Total Tax</th>
+                                                            <th>Total receipt value</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*bootstrap modal*@
+<!-- Row -->
+<div class="modal fade bs-example-modal-lg" id="myTagInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" style="width:1200px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title" id="myTagInvoiceModal">Tag Invoice</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-10 offset-1">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title text-center" style="font-weight: bold">Advance Reciept Details</h6><br />
+
+                                <form data-toggle="validator" role="form" method="post" id="frmAdvanceRecieptDetails" name="frmAdvanceRecieptDetails">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label style="font-weight: bold;color: black;">Receipt Number: </label>&nbsp;
+                                                        <label style="color: black;" id="ReciptNo"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">Receipt Date: </label>&nbsp;
+                                                            <label style="color: black;" id="ReciptDate"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label style="font-weight: bold;color: black;">Total Amendment Taxable Value (Balance): </label>&nbsp;
+                                                        <label style="color: black;" id="TotalAmendmentTaxableValue"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">Rate: </label>&nbsp;
+                                                            <label style="color: black;" id="Rate"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label style="font-weight: bold;color: black;">Cess Percentage: </label>&nbsp;
+                                                        <label style="color: black;" id="CessPercentage"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">GSTIN: </label>&nbsp;
+                                                            <label style="color: black;" id="GSTIN"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label style="font-weight: bold;color: black;">CGST: </label>&nbsp;
+                                                        <label style="color: black;" id="CGST"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">SGST: </label>&nbsp;
+                                                            <label style="color: black;" id="SGST"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="control-label col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <label style="font-weight: bold;color: black;">Cess: </label>&nbsp;
+                                                        <label style="color: black;" id="Cess"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">Total Tax: </label>&nbsp;
+                                                            <label style="color: black;" id="TotalTax"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<table id="filePreview" class="display" style="white-space: nowrap;  text-align:center;"></table>*@
+
+                <div class="row">
+                    <div class="col-xl-10 offset-1">
+                        <div class="card">
+                            <div class="card-body">
+                                @*<h5 class="card-title text-center">Invoice Details</h5>*@
+
+                                <form data-toggle="validator" role="form" method="post" id="frmTagInvoiceAdd" name="frmTagInvoiceAdd">
+                                    <fieldset>
+                                        <legend style="font-weight: bold;text-align:center;font-size: 16px;">Invoice Details</legend>
+                                        <br />
+                                        <div class="form-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="control-label col-md-3"></div>
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">Month: </label>&nbsp;
+                                                            <label style="color: black;" id="Month"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/span-->
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <div class="col-md-9">
+                                                                <label style="font-weight: bold;color: black;">Year: </label>&nbsp;
+                                                                <label style="color: black;" id="Year"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!---->
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+                                        <div class="form-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-3"></label>
+                                                        <div class="form-group">
+                                                            <div class="col-md-9">
+                                                                @*<select class="form-control" id="PickUpInvoiceNumber" name="PickUpInvoiceNumber"></select>
+                                                                <span validation-for="PickUpInvoiceNumber" class="text-danger"></span>*@
+                                                                <label style="font-weight: bold;color: black;">Invoice Number: </label>&nbsp;
+                                                                <select class="selectpicker" id="PickUpInvoiceNumber" name="PickUpInvoiceNumber" onchange="getSLInvoiceDetail(this)" data-required-error="Invoice Number is required" required></select>
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/span-->
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <div class="col-md-9">
+                                                                <label style="font-weight: bold;color: black;">Taxable Value SL: </label>&nbsp;
+                                                                <label style="color: black;" id="TaxableValueSL"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!---->
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+                                        <div class="form-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="control-label col-md-3"></div>
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">CGST: </label>&nbsp;
+                                                            <label style="color: black;" id="CGSTSL"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/span-->
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <div class="col-md-9">
+                                                                <label style="font-weight: bold;color: black;">SGST: </label>&nbsp;
+                                                                <label style="color: black;" id="SGSTSL"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!---->
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+                                        <div class="form-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="control-label col-md-3"></div>
+                                                        <div class="col-md-9">
+                                                            <label style="font-weight: bold;color: black;">IGST: </label>&nbsp;
+                                                            <label style="color: black;" id="IGSTSL"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+
+                                        @Html.Hidden("SLRegisterId")
+                                        @Html.Hidden("AdvancedReceivedID")
+                                        @Html.Hidden("ReceiptNumber")
+                                        @Html.Hidden("AmendmentInvoiceAmount")
+                                        @Html.Hidden("InvoiceAmount")
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger text-left" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#divLoader").show();
+        setTimeout(function() {
+            $('#datable_1').DataTable({
+                "lengthChange": false,
+                "order": [[0, "desc"]]
+            });
+            $("#divLoader").hide();
+        }, 5000);
+        $('#month').val(@ViewBag.Month)
+         $('#year').val(@ViewBag.Year);
+    });
+</script>
+
+<script type="text/javascript">
+    function AdvanceAdjustmentList() {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+            $("#divLoader").show();
+            $.ajax({
+                url: `/AdvRecAmendment/AdvanceAdjustment?m=${month_value}&y=${year_value}`,
+                type: "POST",
+                success: function(data) {
+
+                    $("#divLoader").hide();
+                    console.log(data);
+                    $.toast({
+                        text: "Create Advance Adjustment Success",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'success',
+                        hideAfter: 3500,
+                        stack: 6,
+                    })
+                    setTimeout(function() {
+                        window.location.href = "/AdvRecAmendment/AdvanceAdjustment?m=" + month_value + "&y=" + year_value
+                    }, 2000);
+                },
+                error: function(jqXHR, textStatus, error) {
+                    //alert(data);
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: jqXHR.responseJSON.message,
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                }
+            });
+        }
+    }
+
+    //View Tag Invoice
+    function AddTagInvoice(Id) {
+        if ($("#month").val() === '') {
+            $.toast({
+                text: "Please Select Month",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        if ($("#year").val() === '') {
+            $.toast({
+                text: "Please Select Year",
+                position: 'top-right',
+                loaderBg: '#f8b32d',
+                icon: 'error',
+                hideAfter: 3500,
+                stack: 6
+            });
+            return;
+        }
+        //alert(Id);
+        $("#AdvancedReceivedID").val(Id);
+        //alert($("#AdvancedReceivedID").val());
+        var id = Id;
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+
+        if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+            $("#divLoader").show();
+            $.ajax({
+                type: "POST",
+                url: `/AdvRecAmendment/GetAdvanceRegisterDetailById?id=${id}&month=${month_value}&year=${year_value}`,
+                dataType: "json",
+                cache: false,
+                success: function(result) {
+                    if (result) {
+                        $("#divLoader").hide();
+                        $("#myTagInvoiceModal").modal("show");
+
+                        $("#ReciptNo").html(result.receiptNumber),
+                            $("#ReciptDate").html(result.dateofadjustment),
+                            $("#TotalAmendmentTaxableValue").html(result.totalAmendmentTaxableValue),
+                            $("#Rate").html(result.rate),
+                            $("#CessPercentage").html(result.cessPercentage),
+                            $("#GSTIN").html(result.gstin),
+                            $("#CGST").html(result.cgst),
+                            $("#SGST").html(result.sgst),
+                            $("#Cess").html(result.cess),
+                            $("#TotalTax").html(result.totalTax),
+                            //$("#InvoiceNo").html(result.invoiceNumber),
+                            $("#Month").html(result.month),
+                            $("#Year").html(result.year),
+                            $("#AmendmentInvoiceAmount").val(result.totalAmendmentTaxableValue),
+                            $("#ReceiptNumber").val(result.receiptNumber)
+
+                        getSLDetails();
+                    }
+                    else {
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: "Data as per Invoice Not Tag",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6,
+                        });
+                    }
+                },
+                error: function(result) {
+                    $("#divLoader").hide();
+                    $.toast({
+                        text: "Data as per Invoice Not Tag",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6,
+                    });
+                },
+            });
+        }
+    }
+</script>
+
+@*Get Invoice Number List*@
+<script type="text/javascript">
+    function getSLDetails() {
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+
+        $.ajax({
+            type: "POST",
+            url: `/AdvRecAmendment/GetSLInvoiceNoList?month=${month_value}&year=${year_value}`,
+            data: "{}",
+            success: function(data) {
+                var s = '<option value="-1" style="color: black;">Pickup Invoice Number</option>';
+                for (var i = 0; i < data.length; i++) {
+                    console.log(data[i])
+                    s += '<option style="color: black;" value="' + data[i].id + '">' + data[i].invoiceNumberSL + '</option>';
+                }
+                $("#PickUpInvoiceNumber").html(s).selectpicker('refresh');
+            }
+        });
+    }
+</script>
+
+@*Get Invoice Details*@
+<script type="text/javascript">
+    function getSLInvoiceDetail(sel) {
+        var month_value = $('#month :selected').val();
+        var year_value = $('#year :selected').val();
+        var id = sel.value;
+        $("#SLRegisterId").val(sel.value);
+
+        $.ajax({
+            type: "POST",
+            url: `/AdvRecAmendment/GetSLInvoiceDetail?month=${month_value}&year=${year_value}&id=${id}`,
+            data: "{}",
+            success: function(result) {
+                $("#TaxableValueSL").html(result.taxableValueSL),
+                    $("#IGSTSL").html(result.integratedTaxSL),
+                    $("#CGSTSL").html(result.centralTaxSL),
+                    $("#SGSTSL").html(result.stateUTTaxSL),
+                    $("#InvoiceAmount").val(result.taxableValueSL)
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#frmTagInvoiceAdd').validator().on('submit', function(e) {
+            if (e.isDefaultPrevented()) {
+                // handle the invalid form...
+            }
+            else {
+                var obj = {
+                    AdvancedReceivedID: $("#AdvancedReceivedID").val(),
+                    SLRegisterId: $("#SLRegisterId").val(),
+                    ReceiptNumber: $("#ReceiptNumber").val(),
+                    AmendmentInvoiceAmount: $("#AmendmentInvoiceAmount").val(),
+                    InvoiceAmount: $("#InvoiceAmount").val(),
+                    Month: $('#month').val(),
+                    Year: $('#year').val()
+                };
+                if (($("#SLRegisterId").val() === '') || ($("#SLRegisterId").val() === '-1')) {
+                    $.toast({
+                        text: "Please Select Invoice Number",
+                        position: 'top-right',
+                        loaderBg: '#f8b32d',
+                        icon: 'error',
+                        hideAfter: 3500,
+                        stack: 6
+                    });
+                    return false;
+                }
+
+                //alert(parseInt($('#InvoiceAmount').val()) > parseInt($('#AmendmentInvoiceAmount').val()));
+                if (parseInt($('#InvoiceAmount').val()) > parseInt($('#AmendmentInvoiceAmount').val())) {
+                    let text = "The sl taxable value is greater than advance receipt taxable value.!\nAre you sure want to do tag invoice?";
+                    if (confirm(text) == true) {
+                        text = "You pressed OK!";
+                    } else {
+                        text = "You canceled!";
+                        return false;
+                    }
+                }
+
+                if (($("#SLRegisterId").val() !== '') || ($("#SLRegisterId").val() !== '-1')) {
+                    $("#divLoader").show();
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/AdvRecAmendment/AddTagInvoiceById',
+                        method: 'POST',
+                        data: obj,
+                        success: function(data) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: data,
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'success',
+                                hideAfter: 3500,
+                                stack: 6,
+                            })
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1500);
+                        },
+                        error: function(result) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: "Data as per Invoice Not Tag",
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'error',
+                                hideAfter: 3500,
+                                stack: 6,
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    });
+</script>
+
+

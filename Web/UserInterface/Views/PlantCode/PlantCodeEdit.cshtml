@@ -1,0 +1,269 @@
+﻿@model KSAA.Master.Application.DTOs.Master.PlantCodeViewModel
+
+<style>
+	#divLoader {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  background-color: #fff;
+  z-index: 99;
+}
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <a href="~/PlantCode/PlantCodeList" class="btn btn-primary  mr-10" style="width: 140px; margin-top: 10px; float: right;margin-bottom: 10px;">LIST</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <h6 class="txt-dark capitalize-font">Update Plant Code</h6>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-wrap">
+                            <form class="form-horizontal" data-toggle="validator" role="form" method="post" id="frmPlantCodeEdit" name="frmPlantCodeEdit">
+                                <!--/Row-->
+                                @Html.HiddenFor(x=>x.Id)
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Plant Code</label>
+                                                    <input class="form-control" data-required-error="Plant Code is required" id="Plant_Code" required asp-for="Plant_Code">
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="col-md-9">
+                                                    <label>Address</label>
+                                                    <input class="form-control" data-required-error="Address is required" id="Address" required asp-for="Address">
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <!-- /Row -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="control-label col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <label>Location</label>
+                                                <input class="form-control" data-required-error="Location is required" id="Location" required asp-for="Location">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="col-md-9">
+                                                <label>GST Registration No</label>
+                                                <input class="form-control" data-required-error="GST Registration No is required" id="GSTRegistrationNo" required asp-for="GSTRegistrationNo">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <!-- /Row -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="control-label col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <label>Type Of Unit</label>
+                                                <input class="form-control" data-required-error="Type Of Unit is required" id="TypeOfUnit" required asp-for="@Model.TypeOfUnit">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="col-md-9">
+                                                <label>Products Manufactured</label>
+                                                <input class="form-control" data-required-error="Products Manufactured is required" id="ProductsManufactured" required asp-for="@Model.ProductsManufactured">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <!-- /Row -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="control-label col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <label>Products Traded</label>
+                                                <input class="form-control" data-required-error="Products Traded is required" id="ProductsTraded" required asp-for="@Model.ProductsTraded">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="col-md-9">
+                                                <label>Services Provided</label>
+                                                <input class="form-control" data-required-error="Services Provided is required" id="ServicesProvided" required asp-for="@Model.ServicesProvided">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /Row -->
+                                @*<div class="row">
+                                <div class="col-md-6">
+                                <div class="form-group">
+                                <div class="control-label col-md-3"></div>
+                                <div class="col-md-9">
+                                <div class="input-group">
+                                <div class="input-group-addon"><i class="ti-user"></i></div>
+                                <input class="form-control" data-required-error="IP is required" id="Ip" required asp-for="IP">
+                                </div>
+                                <div class="help-block with-errors"></div>
+                                </div>
+                                </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                <div class="form-group">
+                                <div class="control-label col-md-3"></div>
+                                <div class="col-md-9">
+                                <div class="input-group">
+                                <div class="input-group-addon"><i class="ti-user"></i></div>
+                                <input class="form-control" data-required-error="BrowserCase is required" id="BrowserCase" required asp-for="BrowserCase">
+                                </div>
+                                <div class="help-block with-errors"></div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>*@
+                                <!-- /Row -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="control-label col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <label>Registration Type</label>
+                                                <input class="form-control" data-required-error="Registration Type is required" id="RegistrationType" required asp-for="RegistrationType">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /Row -->
+                                <div class="form-actions mt-10">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button type="submit"
+                                                            class="btn btn-primary  mr-10">
+                                                        Submit
+                                                    </button>
+                                                    <a href="~/PlantCode/PlantCodeList" class="btn btn-warning" id="btnCancel">Cancel</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"> </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#frmPlantCodeEdit').validator().on('submit', function(e) {
+                if (e.isDefaultPrevented()) {
+                    // handle the invalid form...
+                }
+                else {
+
+                    var obj = {
+                        Id: @Model.Id,
+                        Plant_Code: $("#Plant_Code").val(),
+                        Address: $("#Address").val(),
+                        Location: $("#Location").val(),
+                        GSTRegistrationNo: $("#GSTRegistrationNo").val(),
+                        TypeOfUnit: $("#TypeOfUnit").val(),
+                        ProductsManufactured: $("#ProductsManufactured").val(),
+                        ProductsTraded: $("#ProductsTraded").val(),
+                        ServicesProvided: $("#ServicesProvided").val(),
+                        RegistrationType: $("#RegistrationType").val(),
+                        Ip: $("#Ip").val(),
+                        BrowserCase: $("#BrowserCase").val()
+                    };
+
+                    $("#divLoader").show();
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/PlantCode/PlantCodeEdit',
+                        method: 'POST',
+                        data: obj,
+                        success: function(data) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: "Plant Code Update SuccessFully",
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'success',
+                                hideAfter: 3500,
+                                stack: 6,
+
+                            })
+                            setTimeout(function() {
+                                window.location.href = "/PlantCode/PlantCodeList"
+                            }, 1500);
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: jqXHR.responseJSON.message,
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'error',
+                                hideAfter: 3500,
+                                stack: 6
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+}

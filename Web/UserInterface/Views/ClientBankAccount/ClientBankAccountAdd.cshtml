@@ -1,0 +1,228 @@
+﻿@model KSAA.ClientRegister.Application.DTOs.ClientRegister.ClientBankAccountViewModel
+
+<style>
+	#divLoader {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  background-color: #fff;
+  z-index: 99;
+}
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <a href="~/ClientBankAccount/ClientBankAccountList" class="btn btn-primary  mr-10" style="width: 140px; margin-top: 10px; float: right;margin-bottom: 10px;">LIST</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+
+<div class="row">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <h6 class="txt-dark capitalize-font">Add Bank Account</h6>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-wrap">
+                            <form class="form-horizontal" data-toggle="validator" role="form" method="post" id="frmlistOfBankAccount" name="frmlistOfBankAccount">
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Branch Name</label>
+                                                        <input class="form-control" data-required-error="Branch Name required" id="BranchName" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label>Account Number</label>
+                                                            <input class="form-control" data-required-error="Account No is required" id="AccountNo" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                <div class="form-body">
+                                    <!--/Row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Account Type</label>
+                                                        <input class="form-control" data-required-error="Type required" id="Type" required>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <label>Bank IFSC Code</label>
+                                                            <input class="form-control" data-required-error="Bank IFSC Code is required" id="BankIFSCCode" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/Row-->
+                                </div>
+
+                                @*<div class="form-body">
+                                <!--/Row-->
+                                <div class="row">
+                                <div class="col-md-6">
+                                <div class="form-group">
+                                <div class="col-md-9">
+                                <div class="input-group">
+                                <div class="input-group-addon">
+                                <i class=""></i>
+                                </div>
+                                <input class="form-control" type="file" id="UploadOpeningpageofBankPassbook" required>
+                                </div>
+                                <div class="help-block with-errors"></div>
+                                </div>
+                                </div>
+                                </div>
+                                <!--/span-->
+                                <div class="row">
+                                <div class="col-md-6">
+                                <div class="form-group">
+                                <div class="col-md-9">
+                                <div class="input-group">
+                                <div class="input-group-addon"><i class=""></i></div>
+                                <input class="form-control" type="file" id="UploadStatement" required>
+                                </div>
+                                <div class="help-block with-errors"></div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                <!--/span-->
+                                </div>
+                                <!--/Row-->
+                                </div>*@
+
+                                <br />
+                                <br />
+                                <br />
+                                <div class="control-label col-md-2"></div>
+                                <h6>Note: - Account Number, Address of Branch, IFSC code</h6>
+
+                                <div class="form-actions mt-10">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button type="submit"
+                                                            class="btn btn-primary  mr-10">
+                                                        Submit
+                                                    </button>
+                                                    <a href="~/ClientBankAccount/ClientBankAccountList"
+                                                       class="btn btn-warning">
+                                                        Cancel
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"> </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#frmlistOfBankAccount').validator().on('submit', function(e) {
+                if (e.isDefaultPrevented()) {
+                    // handle the invalid form...
+                }
+                else {
+                    var obj = {
+                        BranchName: $("#BranchName").val(),
+                        AccountNo: $("#AccountNo").val(),
+                        Type: $("#Type").val(),
+                        IFSCCode: $("#BankIFSCCode").val(),
+                        //BankPassbookPage: $("#UploadOpeningpageofBankPassbook").val(),
+                        //StatementCancelledCheque: $("#UploadStatement").val(),
+                    };
+                    $("#divLoader").show();
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/ClientBankAccount/ClientBankAccountAdd',
+                        method: 'POST',
+                        data: obj,
+                        success: function(data) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: "Client Bank Account Add SuccessFully",
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'success',
+                                hideAfter: 3500,
+                                stack: 6,
+                            })
+                            setTimeout(function() {
+                                window.location.href = "/ClientBankAccount/ClientBankAccountList"
+                            }, 1500);
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: jqXHR.responseJSON.message,
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'error',
+                                hideAfter: 3500,
+                                stack: 6
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+    }

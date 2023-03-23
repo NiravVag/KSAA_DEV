@@ -1,0 +1,188 @@
+﻿@model KSAA.Master.Application.DTOs.Master.GSTOutputLiabilityCodesViewModel
+
+<style>
+	#divLoader {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  background-color: #fff;
+  z-index: 99;
+}
+</style>
+<!-- Row -->
+<div id="divLoader" style="display:none;"> <img src="~/images/ajax-loader.gif" alt="Loader" /></div>
+<!-- Row -->
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div>
+            <a href="~/GSTOutputLiabilityCodes/GSTOutputLiabilityCodesList" class="btn btn-primary  mr-10" style="width: 140px; margin-top: 10px; float: right;margin-bottom: 10px;">LIST</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <h6 class="txt-dark capitalize-font">Update GST Output Liability Code</h6>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-wrap">
+                            <form class="form-horizontal" data-toggle="validator" role="form" method="post" id="frmGSTOutputLiabilityCodesEdit" name="frmGSTOutputLiabilityCodesEdit">
+                                <!--/Row-->
+                                @Html.HiddenFor(x=>x.Id)
+                                <!--/Row-->
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>Customer Code</label>
+                                                    <input class="form-control" data-required-error="Customer Code is required" required id="customerCode" asp-for="CustomerCode">
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="col-md-9">
+                                                    <label>GL Liability Name</label>
+                                                    <input class="form-control" data-required-error="GL Liability Name is required" required id="gLLiabilityName" asp-for="GLLiabilityName">
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="control-label col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <label>GL Liability Code</label>
+                                                    <input class="form-control" data-required-error="GL Liability Code is required" required id="gLLiabilityCode" asp-for="GLLiabilityCode">
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*<div class="col-md-6">
+                                        <div class="form-group">
+                                        <div class="control-label col-md-3"></div>
+                                        <div class="col-md-9">
+                                        <label>Upload</label>
+                                        <div class="input-group">
+                                        <div class="input-group-addon"><i class=""></i></div>
+                                        <input class="form-control" data-required-error="Upload required" required id="upload" asp-for="Upload">
+                                        </div>
+                                        <div class="help-block with-errors"></div>
+                                        </div>
+                                        </div>
+                                        </div>*@
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="col-md-9">
+                                                    <label>Ledger Mapping</label>
+                                                    <input class="form-control" data-required-error="Ledger Mapping required" required id="ledgerMapping" asp-for="LedgerMapping">
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <!-- /Row -->
+                                <div class="form-actions mt-10">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button type="submit"
+                                                            class="btn btn-primary  mr-10">
+                                                        Submit
+                                                    </button>
+                                                    <a href="~/GSTOutputLiabilityCodes/GSTOutputLiabilityCodesList" class="btn btn-warning" id="btnCancel">Cancel</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"> </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#frmGSTOutputLiabilityCodesEdit').validator().on('submit', function(e) {
+                if (e.isDefaultPrevented()) {
+                    // handle the invalid form...
+                }
+                else {
+                    var obj = {
+                        Id: @Model.Id,
+                        CustomerCode: $("#customerCode").val(),
+                        GLLiabilityName: $("#gLLiabilityName").val(),
+                        GLLiabilityCode: $("#gLLiabilityCode").val(),
+                        Upload: $("#upload").val(),
+                        LedgerMapping: $("#ledgerMapping").val(),
+                        Ip: $("#ip").val(),
+                        BrowserCase: $("#browserCase").val()
+                    };
+                    $("#divLoader").show();
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/GSTOutputLiabilityCodes/GSTOutputLiabilityCodesEdit',
+                        method: 'POST',
+                        data: obj,
+                        success: function(data) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: "GST Output Liability Codes Update SuccessFully",
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'success',
+                                hideAfter: 3500,
+                                stack: 6,
+                            })
+                            setTimeout(function() {
+                                window.location.href = "/GSTOutputLiabilityCodes/GSTOutputLiabilityCodesList"
+                            }, 1500);
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            $("#divLoader").hide();
+                            $.toast({
+                                text: jqXHR.responseJSON.message,
+                                position: 'top-right',
+                                loaderBg: '#f8b32d',
+                                icon: 'error',
+                                hideAfter: 3500,
+                                stack: 6
+                            });
+                            //setTimeout(function () {
+
+                            //}, 1500);
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+    }

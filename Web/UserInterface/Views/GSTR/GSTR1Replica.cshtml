@@ -1,0 +1,1127 @@
+﻿@model KSAA.GL_Income.Application.DTOs.GSTR.GSTRReplicaListModel
+@using KSAA.Domain.Common
+
+<style>
+        #divLoader {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+    }
+</style>
+
+<link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap4.min.css" asp-append-version="true">
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+<div class="row" style="margin-top:10px;">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading">
+                <div class="pull-left">
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="form-wrap">
+                        @*<form class="form-inline">*@
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Month</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                            asp-items="@(new SelectList(@ViewBag.Months,"Value","Text"))" id="month"></select>
+
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="col-sm-3" style="padding-left:10px;">
+                            <h6 style="margin-left: 5px;">Year</h6>
+                            <select class="selectpicker" data-style="form-control btn-default btn-outline"
+                            asp-items="@(new SelectList(@ViewBag.Years,"Value","Text"))" id="year"></select>
+
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        @*<button type="button" class="btn btn-success btn-anim" style="float:right"><i class="icon-rocket"></i><span class="btn-text">submit</span></button>*@
+                        <button class="btn btn-primary" style="float: right; margin-right:10px; margin-top: 11px;" onclick="GSTRReplicaSheet()">Create GSTR-1 Replica Sheet</button>
+                        @*</form>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
+
+<table border="0" style="width: 100% !important;" id="gstr1Replica" class="display pt-2">
+    <tbody>
+        <tr>
+            <td>
+                <h2 style="text-align:center">GSTR-1 Replica</h2>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="text-align:center;">
+                <span style="font-size:16px;">
+                    [See rule 59(1)]
+                    <br />
+                    Details of outward supplies of goods or services
+                    <br />
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:right;">
+                <span style="font-size:14px;">
+                    Financial Year: 2023-24
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:right;">
+                <span style="font-size:14px; margin-right: 100px;">
+                    Period
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span style="font-size:15px;">
+                    1. GSTIN <br />
+                    2(a) Legal name of the registered person <br />
+                    2(b)  Trade name, if any
+                </span>
+                <br /><br />
+            </td>
+        </tr>
+
+
+        <table border="1" style="width: 100% !important;" id="gstr1RepData" class="cell-border">
+            <thead>
+                <tr style="background-color:antiquewhite">
+                    <th style="width: 130px !important">Description</th>
+                    <th style="width: 140px !important">No Of Records</th>
+                    <th style="width: 130px !important">Document Type</th>
+                    <th style="width: 100px !important">Value (₹)</th>
+                    <th style="width: 150px !important">Integrated Tax (₹)</th>
+                    <th style="width: 140px !important">Centerl Text (₹)</th>
+                    <th style="width: 110px !important">State Tax (₹)</th>
+                    <th style="width: 110px !important">Cess (₹)</th>
+                </tr>
+            </thead>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">4A - Taxable outward supplies made to registered persons (other than reverse charge supplies) - B2B Regular</td>
+            </tr>
+            
+            @if (Model.gSTRReplicas != null && Model.gSTRReplicas.Count>0)
+            {
+                @foreach (var item in Model.gSTRReplicas.Where(x=>x.GSTRTable=="4A" && x.NoOfRecords != "0").OrderBy(x=>x.GSTRCategory))
+                {
+                    <tr>
+                        <td style="background-color:lightcyan">Total</td>
+                        <td>@item.NoOfRecords</td>
+                        <td>@item.DocumentType</td>
+                        <td>@item.TaxableValue</td>
+                        <td>@item.IntegratedTax</td>
+                        <td>@item.CentralTax</td>
+                        <td>@item.StateTax</td>
+                        <td>@item.StateTaxCess</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">4B - Taxable outward supplies made to registered persons attracting tax on reverse charge - B2B Reverse charge</td>
+            </tr>
+             @if (Model.gSTRReplicas != null && Model.gSTRReplicas.Count>0)
+            {
+                @foreach (var item in Model.gSTRReplicas.Where(x => x.GSTRTable == "4B" && x.NoOfRecords != "0").OrderBy(x => x.GSTRCategory))
+                {
+                    <tr>
+                        <td style="background-color:lightcyan">Total</td>
+                        <td>@item.NoOfRecords</td>
+                        <td>@item.DocumentType</td>
+                        <td>@item.TaxableValue</td>
+                        <td>@item.IntegratedTax</td>
+                        <td>@item.CentralTax</td>
+                        <td>@item.StateTax</td>
+                        <td>@item.StateTaxCess</td>
+                    </tr>
+                }
+            }
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">5A - Taxable outward inter-state supplies made to unregistered persons (where invoice value is more than Rs.2.5 lakh) - B2CL (Large)</td>
+            </tr>
+            @if (Model.gSTRReplicas != null && Model.gSTRReplicas.Count>0)
+            {
+                @foreach (var item in Model.gSTRReplicas.Where(x => x.GSTRTable == "5A" && x.NoOfRecords != "0").OrderBy(x => x.GSTRCategory))
+                {
+                    <tr>
+                        <td style="background-color:lightcyan">Total</td>
+                        <td>@item.NoOfRecords</td>
+                        <td>@item.DocumentType</td>
+                        <td>@item.TaxableValue</td>
+                        <td>@item.IntegratedTax</td>
+                        <td>@item.CentralTax</td>
+                        <td>@item.StateTax</td>
+                        <td>@item.StateTaxCess</td>
+                    </tr>
+                }
+            }
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">6A – Exports (with/without payment)</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">EXPWP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWOP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">6B - Supplies made to SEZ unit or SEZ developer - SEZWP/SEZWOP</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">SEZWP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">SEZWOP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">6C - Deemed Exports – DE</td>
+            </tr>
+            @if (Model.gSTRReplicas != null && Model.gSTRReplicas.Count>0)
+            {
+                @foreach (var item in Model.gSTRReplicas.Where(x => x.GSTRTable == "6C" && x.NoOfRecords != "0").OrderBy(x => x.GSTRCategory))
+                {
+                    <tr>
+                        <td style="background-color:lightcyan">Total</td>
+                        <td>@item.NoOfRecords</td>
+                        <td>@item.DocumentType</td>
+                        <td>@item.TaxableValue</td>
+                        <td>@item.IntegratedTax</td>
+                        <td>@item.CentralTax</td>
+                        <td>@item.StateTax</td>
+                        <td>@item.StateTaxCess</td>
+                    </tr>
+                }
+            }
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">7 - Taxable supplies (Net of debit and credit notes) to unregistered persons (other than the supplies covered in Table 5) - B2CS (Others)</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">8 - Nil rated, exempted and non GST outward supplies</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td colspan="4"></td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">NIL</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Exempted</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Non GST</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9A - Amendment to taxable outward supplies made to registered person in returns of earlier tax periods in table 4 - B2B Regular</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>0</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9A - Amendment to taxable outward supplies made to registered person in returns of earlier tax periods in table 4 - B2B Reverse Charge</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>0</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9A - Amendment to Inter-State supplies made to unregistered person (where invoice value is more than Rs.2.5 lakh) in returns of earlier tax periods in table 5 - B2CL (Large)</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>0</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9A - Amendment to Export supplies in returns of earlier tax periods in table 6A (EXPWP/EXPWOP)</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>0</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWOP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9A - Amendment to supplies made to SEZ units or SEZ developers in returns of earlier tax periods in table 6B (SEZWP/SEZWOP)</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>0</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">SEZWP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">SEZWOP</td>
+                <td>xx</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9A - Amendment to Deemed Exports in returns of earlier tax periods in table 6C (DE)</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>0</td>
+                <td>Invoice</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9B - Credit/Debit Notes (Registered) – CDNR</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total - Net off debit/credit notes (Debit notes - Credit notes)</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Credit / Debit notes issued to registered person for taxable outward supplies in table 4 other than table 6 - B2B Regular</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total - Net off debit/credit notes (Debit notes - Credit notes)</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Credit / Debit notes issued to registered person for taxable outward supplies in table 4 other than table 6 - B2B Reverse charge</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total - Net off debit/credit notes (Debit notes - Credit notes)</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Credit / Debit notes issued to registered person for taxable outward supplies in table 6B - SEZWP/SEZWOP</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total - Net off debit/credit notes (Debit notes - Credit notes)</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Credit / Debit notes issued to registered person for taxable outward supplies in table 6C – DE</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total - Net off debit/credit notes (Debit notes - Credit notes)</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9B - Credit/Debit Notes (Unregistered) – CDNUR</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Total - Net off debit/credit notes (Debit notes - Credit notes)</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Unregistered Type</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">B2CL</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWP</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWOP</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9C - Amended Credit/Debit Notes (Registered) - CDNRA</td>
+            </tr>
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net Differential amount (Net Amended Debit notes - Net Amended Credit notes) - Total</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Amended Credit / Debit notes issued to registered person for taxable outward supplies in table 4 other than table 6 - B2B Regular</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net Total (Net Amended Debit notes - Net Amended Credit notes)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Amended Credit / Debit notes issued to registered person for taxable outward supplies in table 4 other than table 6 - B2B Reverse charge</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net Total (Net Amended Debit notes - Net Amended Credit notes)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Amended Credit / Debit notes issued to registered person for taxable outward supplies in table 6B - SEZWP/SEZWOP</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net Total (Net Amended Debit notes - Net Amended Credit notes)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Amended Credit / Debit notes issued to registered person for taxable outward supplies in table 6C – DE</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net Total (Net Amended Debit notes - Net Amended Credit notes)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">9C - Amended Credit/Debit Notes (Unregistered) - CDNURA</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>xx</td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net Differential amount (Net Amended Debit notes - Net Amended Credit notes) - Total</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">Unregistered Type</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">B2CL</td>
+                <td></td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWP</td>
+                <td></td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">EXPWOP</td>
+                <td></td>
+                <td>Note</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">10 - Amendment to taxable outward supplies made to unregistered person in returns for earlier tax periods in table 7 - B2C (Others)</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>xx</td>
+                <td>Net Value</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net differential amount (Amended - Original)</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">11A(1), 11A(2) - Advances received for which invoice has not been issued (tax amount to be added to the output tax liability) (Net of refund vouchers)</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td>xx</td>
+                <td>Net Value</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">11B(1), 11B(2) - Advance amount received in earlier tax period and adjusted against the supplies being shown in this tax period in Table Nos. 4, 5, 6 and 7</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td>xx</td>
+                <td>Net Value</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">11A - Amendment to advances received in returns for earlier tax periods in table 11A(1), 11A(2)</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>xx</td>
+                <td>Net Value</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">11B - Amendment to advances adjusted in returns for earlier tax periods in table 11B(1), 11B(2)</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Amended amount - Total</td>
+                <td>xx</td>
+                <td>Net Value</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">12 - HSN-wise summary of outward supplies</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Total</td>
+                <td>xx</td>
+                <td>NA</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="background-color:lightblue">13 - Documents issued</td>
+            </tr>
+
+            <tr>
+                <td style="background-color:lightcyan">Net issued documents</td>
+                <td>xx</td>
+                <td>All Documents</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+
+            <tr style="background-color:antiquewhite">
+                <td>Total Tax Liability</td>
+                <td></td>
+                <td></td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+                <td>xx</td>
+            </tr>
+
+        </table>
+
+    </tbody>
+</table>
+
+
+@section Scripts{
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap4.js" asp-append-version="true"></script>
+    <script src="~/js/app.js" asp-append-version="true"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/vendors/bower_components/bootstrap-validator/dist/validator.js"></script>
+
+    <script type="text/javascript">
+        
+        $(document).ready(function () {
+            $('#gstr1RepData').DataTable({
+                searching: false,
+                paging: false,
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function GSTRReplicaSheet() {
+            if ($("#month").val() === '') {
+                $.toast({
+                    text: "Please Select Month",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            if ($("#year").val() === '') {
+                $.toast({
+                    text: "Please Select Year",
+                    position: 'top-right',
+                    loaderBg: '#f8b32d',
+                    icon: 'error',
+                    hideAfter: 3500,
+                    stack: 6
+                });
+                return;
+            }
+            var month_value = $('#month :selected').val();
+            var year_value = $('#year :selected').val();
+
+            if (($("#month").val() !== '') && ($("#year").val() !== '')) {
+                $("#divLoader").show();
+                $.ajax({
+                    url: `/GSTR/GSTR1Replica?m=${month_value}&y=${year_value}`,
+                    type: "POST",
+                    success: function (data) {
+                        $("#divLoader").hide();
+                        console.log(data);
+                        $.toast({
+                            text: "Create GSTR Replica Sheet Success",
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'success',
+                            hideAfter: 3500,
+                            stack: 6,
+                        })
+                        setTimeout(function () {
+                            window.location.href = "/GSTR/GSTR1Replica?m=" + month_value + "&y=" + year_value
+                        }, 2000);
+                    },
+                    error: function (jqXHR, textStatus, error) {
+                        $("#divLoader").hide();
+                        $.toast({
+                            text: jqXHR.responseJSON.message,
+                            position: 'top-right',
+                            loaderBg: '#f8b32d',
+                            icon: 'error',
+                            hideAfter: 3500,
+                            stack: 6
+                        });
+                    }
+                });
+            }
+        }
+        
+    </script>
+    }
